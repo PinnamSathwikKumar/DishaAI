@@ -1,15 +1,24 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}CareerAI{% endblock %} — AI Career Platform</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}DishaAI{% endblock %} — AI Career Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" sizes="32x32" href="career_ai/static/disha.png" />
+    <link rel="icon" sizes="192x192" href="career_ai/static/disha.png" />
+    <link rel="apple-touch-icon" href="career_ai/static/disha.png" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
     {% block extra_css %}{% endblock %}
-</head>
-<body>
+  </head>
+  <body>
     <!-- Background particles -->
     <div class="bg-grid"></div>
     <div class="gradient-orb orb-1"></div>
@@ -18,89 +27,112 @@
 
     <!-- Navigation -->
     <nav class="navbar">
-        <div class="nav-container">
-            <a href="{{ url_for('auth.index') }}" class="nav-logo">
-                <span class="logo-icon">⚡</span>
-                <span class="logo-text">Career<span class="accent">AI</span></span>
-            </a>
+      <div class="nav-container">
+        <a href="{{ url_for('auth.index') }}" class="nav-logo">
+          <span class="logo-icon">⚡</span>
+          <span class="logo-text">Disha<span class="accent">AI</span></span>
+        </a>
 
-            {% if session.get('user_id') %}
-            <div class="nav-links">
-                <a href="{{ url_for('user.dashboard') }}" class="nav-link {% if request.endpoint == 'user.dashboard' %}active{% endif %}">Dashboard</a>
-                <a href="{{ url_for('user.resume') }}" class="nav-link {% if request.endpoint == 'user.resume' %}active{% endif %}">Resume</a>
-                <a href="{{ url_for('user.chat') }}" class="nav-link {% if request.endpoint == 'user.chat' %}active{% endif %}">Chat</a>
-                <a href="{{ url_for('user.dsa_roadmap') }}" class="nav-link {% if request.endpoint == 'user.dsa_roadmap' %}active{% endif %}">DSA</a>
-            </div>
-            <div class="nav-right">
-                <span class="nav-user">{{ session.user_name }}</span>
-                <a href="{{ url_for('auth.logout') }}" class="btn btn-ghost">Logout</a>
-            </div>
-            {% elif session.get('admin_id') %}
-            <div class="nav-links">
-                <a href="{{ url_for('admin.dashboard') }}" class="nav-link">Dashboard</a>
-                <a href="{{ url_for('admin.resources') }}" class="nav-link">Resources</a>
-                <a href="{{ url_for('admin.users') }}" class="nav-link">Users</a>
-                <a href="{{ url_for('admin.suggestions') }}" class="nav-link">Tips</a>
-            </div>
-            <div class="nav-right">
-                <span class="nav-user admin-badge">Admin</span>
-                <a href="{{ url_for('auth.admin_logout') }}" class="btn btn-ghost">Logout</a>
-            </div>
-            {% else %}
-            <div class="nav-links">
-                <a href="{{ url_for('auth.login') }}" class="nav-link">Login</a>
-                <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Get Started</a>
-            </div>
-            {% endif %}
+        {% if session.get('user_id') %}
+        <div class="nav-links">
+          <a
+            href="{{ url_for('user.dashboard') }}"
+            class="nav-link {% if request.endpoint == 'user.dashboard' %}active{% endif %}"
+            >Dashboard</a
+          >
+          <a
+            href="{{ url_for('user.resume') }}"
+            class="nav-link {% if request.endpoint == 'user.resume' %}active{% endif %}"
+            >Resume</a
+          >
+          <a
+            href="{{ url_for('user.chat') }}"
+            class="nav-link {% if request.endpoint == 'user.chat' %}active{% endif %}"
+            >Chat</a
+          >
+          <a
+            href="{{ url_for('user.dsa_roadmap') }}"
+            class="nav-link {% if request.endpoint == 'user.dsa_roadmap' %}active{% endif %}"
+            >DSA</a
+          >
+        </div>
+        <div class="nav-right">
+          <span class="nav-user">{{ session.user_name }}</span>
+          <a href="{{ url_for('auth.logout') }}" class="btn btn-ghost"
+            >Logout</a
+          >
+        </div>
+        {% elif session.get('admin_id') %}
+        <div class="nav-links">
+          <a href="{{ url_for('admin.dashboard') }}" class="nav-link"
+            >Dashboard</a
+          >
+          <a href="{{ url_for('admin.resources') }}" class="nav-link"
+            >Resources</a
+          >
+          <a href="{{ url_for('admin.users') }}" class="nav-link">Users</a>
+          <a href="{{ url_for('admin.suggestions') }}" class="nav-link">Tips</a>
+        </div>
+        <div class="nav-right">
+          <span class="nav-user admin-badge">Admin</span>
+          <a href="{{ url_for('auth.admin_logout') }}" class="btn btn-ghost"
+            >Logout</a
+          >
+        </div>
+        {% else %}
+        <div class="nav-links">
+          <a href="{{ url_for('auth.login') }}" class="nav-link">Login</a>
+          <a href="{{ url_for('auth.register') }}" class="btn btn-primary"
+            >Get Started</a
+          >
+        </div>
+        {% endif %}
 
-            <!-- Mobile menu toggle -->
-            <button class="nav-toggle" onclick="toggleMobileMenu()">☰</button>
-        </div>
-        <!-- Mobile menu -->
-        <div class="nav-mobile" id="mobileMenu">
-            {% if session.get('user_id') %}
-            <a href="{{ url_for('user.dashboard') }}">Dashboard</a>
-            <a href="{{ url_for('user.resume') }}">Resume</a>
-            <a href="{{ url_for('user.chat') }}">Chat AI</a>
-            <a href="{{ url_for('user.dsa_roadmap') }}">DSA Roadmap</a>
-            <a href="{{ url_for('auth.logout') }}">Logout</a>
-            {% else %}
-            <a href="{{ url_for('auth.login') }}">Login</a>
-            <a href="{{ url_for('auth.register') }}">Register</a>
-            {% endif %}
-        </div>
+        <!-- Mobile menu toggle -->
+        <button class="nav-toggle" onclick="toggleMobileMenu()">☰</button>
+      </div>
+      <!-- Mobile menu -->
+      <div class="nav-mobile" id="mobileMenu">
+        {% if session.get('user_id') %}
+        <a href="{{ url_for('user.dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('user.resume') }}">Resume</a>
+        <a href="{{ url_for('user.chat') }}">Chat AI</a>
+        <a href="{{ url_for('user.dsa_roadmap') }}">DSA Roadmap</a>
+        <a href="{{ url_for('auth.logout') }}">Logout</a>
+        {% else %}
+        <a href="{{ url_for('auth.login') }}">Login</a>
+        <a href="{{ url_for('auth.register') }}">Register</a>
+        {% endif %}
+      </div>
     </nav>
 
     <!-- Flash messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        <div class="flash-container">
-            {% for cat, msg in messages %}
-            <div class="flash flash-{{ cat }}">
-                <span>{{ msg }}</span>
-                <button onclick="this.parentElement.remove()">✕</button>
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-    {% endwith %}
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %}
+    <div class="flash-container">
+      {% for cat, msg in messages %}
+      <div class="flash flash-{{ cat }}">
+        <span>{{ msg }}</span>
+        <button onclick="this.parentElement.remove()">✕</button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %} {% endwith %}
 
     <!-- Main content -->
-    <main class="main-content">
-        {% block content %}{% endblock %}
-    </main>
+    <main class="main-content">{% block content %}{% endblock %}</main>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="footer-inner">
-            <span>⚡ CareerAI — Built for CSE Students</span>
-            <span class="footer-links">
-                <a href="{{ url_for('auth.admin_login') }}">Admin</a>
-            </span>
-        </div>
+      <div class="footer-inner">
+        <span>⚡ DishaAI — Built for CSE Students</span>
+        <span class="footer-links">
+          <a href="{{ url_for('auth.admin_login') }}">Admin</a>
+        </span>
+      </div>
     </footer>
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     {% block extra_js %}{% endblock %}
-</body>
+  </body>
 </html>

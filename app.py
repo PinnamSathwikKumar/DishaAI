@@ -6,11 +6,12 @@ AI-powered career assistant platform for CSE students
 import os
 from flask import Flask
 from config import Config
-from database.db import init_db, seed_admin
+from database.db import init_db, close_db
 from routes.auth import auth_bp
 from routes.user import user_bp
 from routes.admin import admin_bp
 from routes.api import api_bp
+
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -22,7 +23,9 @@ def create_app(config_class=Config):
     # Initialize database
     with app.app_context():
         init_db()
-        seed_admin()
+
+    # Close DB after each request
+    app.teardown_appcontext(close_db)
 
     # Register blueprints
     app.register_blueprint(auth_bp)

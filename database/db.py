@@ -1,200 +1,189 @@
 """
-Database module - SQLite setup, schema creation, and helper utilities
-Uses sqlite3 directly (no ORM) to stay lightweight on low-RAM machines
+Database module - MySQL setup
 """
 
-import sqlite3
-import os
+import mysql.connector
+from mysql.connector import Error
 from werkzeug.security import generate_password_hash
 from flask import current_app, g
 
 
 def get_db():
-    """Get database connection, stored on Flask's g object for request lifetime."""
+    """Get MySQL connection stored on Flask g object."""
+    print("DB HOST:", current_app.config['DB_HOST'])
+    print("DB USER:", current_app.config['DB_USER'])
     if 'db' not in g:
-        g.db = sqlite3.connect(
-            current_app.config['DATABASE_PATH'],
-            detect_types=sqlite3.PARSE_DECLTYPES
-        )
-        g.db.row_factory = sqlite3.Row  # Return dict-like rows
+        try:
+            g.db = mysql.connector.connect(
+                host=current_app.config['DB_HOST'],
+                user=current_app.config['DB_USER'],
+                password=current_app.config['DB_PASSWORD'],
+                database=current_app.config['DB_NAME'],
+                autocommit=False
+            )
+        except mysql.connector.Error as err:
+            print("MySQL Connection Error:", err)
+            raise
+
     return g.db
 
 
 def close_db(e=None):
-    """Close database connection at end of request."""
     db = g.pop('db', None)
     if db is not None:
         db.close()
 
 
 def init_db():
-    """Create all tables if they don't exist."""
-    db_path = current_app.config['DATABASE_PATH']
-    os.makedirs(os.path.dirname(db_path), exist_ok=True)
-
-    conn = sqlite3.connect(db_path)
+    """Create tables if not exist."""
+    conn = get_db()
     cursor = conn.cursor()
 
-    # --- Users table ---
-    cursor.execute('''
+    # USERS
+    cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            email VARCHAR(255) UNIQUE NOT NULL,
             password_hash TEXT NOT NULL,
-            college TEXT,
-            year TEXT,
+            college VARCHAR(255),
+            year VARCHAR(50),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
-    ''')
+    """)
 
-    # --- Admin table ---
-    cursor.execute('''
+    # ADMINS
+    cursor.execute("""
         CREATE TABLE IF NOT EXISTS admins (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT UNIQUE NOT NULL,
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            email VARCHAR(255) UNIQUE NOT NULL,
             password_hash TEXT NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
-    ''')
+    """)
 
-    # --- Resumes metadata table (no file stored permanently) ---
-    cursor.execute('''
+    # RESUMES
+    cursor.execute("""
         CREATE TABLE IF NOT EXISTS resumes (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            filename TEXT NOT NULL,
-            ats_score INTEGER,
-            word_count INTEGER,
-            skills_found TEXT,          -- JSON string
-            missing_keywords TEXT,      -- JSON string
-            weak_verbs_found TEXT,      -- JSON string
-            suggestions TEXT,           -- JSON string
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT NOT NULL,
+            filename VARCHAR(255) NOT NULL,
+            ats_score INT,
+            word_count INT,
+            skills_found TEXT,
+            missing_keywords TEXT,
+            weak_verbs_found TEXT,
+            suggestions TEXT,
             uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         )
-    ''')
+    """)
 
-    # --- DSA Resources table ---
-    cursor.execute('''
+    # DSA RESOURCES
+    cursor.execute("""
         CREATE TABLE IF NOT EXISTS dsa_resources (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            category TEXT NOT NULL,         -- 'topic', 'youtube', 'platform', 'book'
-            title TEXT NOT NULL,
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            category VARCHAR(50) NOT NULL,
+            title VARCHAR(255) NOT NULL,
             description TEXT,
             url TEXT,
-            difficulty TEXT,                -- 'beginner', 'intermediate', 'advanced'
-            order_index INTEGER DEFAULT 0,
-            is_active INTEGER DEFAULT 1,
+            difficulty VARCHAR(50),
+            order_index INT DEFAULT 0,
+            is_active BOOLEAN DEFAULT TRUE,
             added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
-    ''')
+    """)
 
-    # --- Suggestions / Tips table ---
-    cursor.execute('''
+    # SUGGESTIONS
+    cursor.execute("""
         CREATE TABLE IF NOT EXISTS suggestions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            category TEXT NOT NULL,         -- 'resume', 'interview', 'career', 'dsa'
-            title TEXT NOT NULL,
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            category VARCHAR(50) NOT NULL,
+            title VARCHAR(255) NOT NULL,
             content TEXT NOT NULL,
-            is_active INTEGER DEFAULT 1,
+            is_active BOOLEAN DEFAULT TRUE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
-    ''')
+    """)
 
-    # --- Chat history (lightweight, per session) ---
-    cursor.execute('''
+    # CHAT HISTORY
+    cursor.execute("""
         CREATE TABLE IF NOT EXISTS chat_history (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            role TEXT NOT NULL,             -- 'user' or 'assistant'
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT NOT NULL,
+            role VARCHAR(50) NOT NULL,
             message TEXT NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         )
-    ''')
+    """)
+
 
     conn.commit()
-    conn.close()
-    _seed_dsa_resources(db_path)
+    cursor.close()
+    seed_admin()
+    seed_dsa_resources()
 
+def query_db(query, args=None, one=False):
+    conn = get_db()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute(query, args or ())
+    result = cursor.fetchall()
+    cursor.close()
+    return (result[0] if result else None) if one else result
+
+
+def execute_db(query, args=None):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute(query, args or ())
+    conn.commit()
+    last_id = cursor.lastrowid
+    cursor.close()
+    return last_id
 
 def seed_admin():
-    """Create default admin account if it doesn't exist."""
     from config import Config
+
     admin_email = Config.ADMIN_DEFAULT_EMAIL.lower()
-    db_path = current_app.config['DATABASE_PATH']
-    conn = sqlite3.connect(db_path)
+    admin_password = Config.ADMIN_DEFAULT_PASSWORD
+
+    conn = get_db()
     cursor = conn.cursor()
 
-    # Normalize existing admin emails so login is not broken by case-sensitive stored values.
-    cursor.execute('UPDATE admins SET email = ? WHERE LOWER(email) = ?', (admin_email, admin_email))
-    conn.commit()
+    cursor.execute("SELECT id FROM admins WHERE email = %s", (admin_email,))
+    existing = cursor.fetchone()
 
-    cursor.execute('SELECT id FROM admins WHERE email = ?', (admin_email,))
-    if not cursor.fetchone():
+    if not existing:
         cursor.execute(
-            'INSERT INTO admins (email, password_hash) VALUES (?, ?)',
-            (admin_email, generate_password_hash(Config.ADMIN_DEFAULT_PASSWORD))
+            "INSERT INTO admins (email, password_hash) VALUES (%s, %s)",
+            (admin_email, generate_password_hash(admin_password))
         )
         conn.commit()
-    conn.close()
 
+    cursor.close()
 
-def query_db(query, args=(), one=False):
-    """Execute a SELECT query and return results."""
-    db = get_db()
-    cur = db.execute(query, args)
-    rv = cur.fetchall()
-    return (rv[0] if rv else None) if one else rv
-
-
-def execute_db(query, args=()):
-    """Execute INSERT/UPDATE/DELETE and commit."""
-    db = get_db()
-    cur = db.execute(query, args)
-    db.commit()
-    return cur.lastrowid
-
-
-def _seed_dsa_resources(db_path):
-    """Seed default DSA resources if table is empty."""
-    conn = sqlite3.connect(db_path)
+def seed_dsa_resources():
+    conn = get_db()
     cursor = conn.cursor()
-    cursor.execute('SELECT COUNT(*) FROM dsa_resources')
+
+    cursor.execute("SELECT COUNT(*) FROM dsa_resources")
     count = cursor.fetchone()[0]
 
     if count == 0:
         resources = [
-            # Topics - Beginner
-            ('topic', 'Arrays & Strings', 'Foundation of coding interviews. Master traversal, sliding window, two pointers.', 'https://leetcode.com/tag/array/', 'beginner', 1),
-            ('topic', 'Linked Lists', 'Singly, doubly, circular lists. Reversal, cycle detection, merge operations.', 'https://leetcode.com/tag/linked-list/', 'beginner', 2),
-            ('topic', 'Stacks & Queues', 'LIFO/FIFO structures. Monotonic stacks, BFS queues, deques.', 'https://leetcode.com/tag/stack/', 'beginner', 3),
-            ('topic', 'Recursion & Backtracking', 'Tree of choices. Subsets, permutations, N-Queens, Sudoku solver.', 'https://leetcode.com/tag/backtracking/', 'intermediate', 4),
-            ('topic', 'Trees & BST', 'Binary trees, BST operations, tree DP, LCA, diameter problems.', 'https://leetcode.com/tag/tree/', 'intermediate', 5),
-            ('topic', 'Graphs & BFS/DFS', 'Grid problems, topological sort, Dijkstra, Union-Find, cycle detection.', 'https://leetcode.com/tag/graph/', 'intermediate', 6),
-            ('topic', 'Dynamic Programming', 'Memoization vs tabulation. 0/1 knapsack, LCS, LIS, coin change.', 'https://leetcode.com/tag/dynamic-programming/', 'advanced', 7),
-            ('topic', 'Heaps & Priority Queue', 'Min/max heaps. Top-K problems, median finder, merge K lists.', 'https://leetcode.com/tag/heap-priority-queue/', 'intermediate', 8),
-            ('topic', 'Binary Search', 'Search on answer technique, rotated arrays, matrix search.', 'https://leetcode.com/tag/binary-search/', 'intermediate', 9),
-            ('topic', 'Sorting Algorithms', 'Merge sort, quick sort, counting sort, custom comparators.', 'https://en.wikipedia.org/wiki/Sorting_algorithm', 'beginner', 10),
-            # YouTube channels
-            ('youtube', 'NeetCode', 'Best structured DSA explanations with visual animations. 150-problem roadmap.', 'https://youtube.com/@NeetCode', 'intermediate', 1),
-            ('youtube', 'Abdul Bari', 'Deep algorithm theory with proofs. Perfect for university exam prep.', 'https://youtube.com/@abdul_bari', 'intermediate', 2),
-            ('youtube', 'William Fiset', 'Graph algorithms, advanced data structures in depth.', 'https://youtube.com/@WilliamFiset-videos', 'advanced', 3),
-            ('youtube', 'Striver (takeUForward)', 'SDE Sheet walkthrough, comprehensive placement prep.', 'https://youtube.com/@takeUforward', 'intermediate', 4),
-            ('youtube', 'Aditya Verma (DP Series)', 'Best DP series on YouTube. Pattern-based approach to DP.', 'https://youtube.com/@adityaverma', 'intermediate', 5),
-            ('youtube', 'CS Dojo', 'Beginner-friendly, clear explanations of fundamentals.', 'https://youtube.com/@CSDojo', 'beginner', 6),
-            # Platforms
-            ('platform', 'LeetCode', 'Industry standard. 2000+ problems. Company-tagged questions. Contest platform.', 'https://leetcode.com', 'intermediate', 1),
-            ('platform', 'Codeforces', 'Competitive programming. Rated contests every week. Improves speed.', 'https://codeforces.com', 'advanced', 2),
-            ('platform', 'GeeksForGeeks', 'Theory + practice. Company-specific interview questions. Articles.', 'https://geeksforgeeks.org', 'beginner', 3),
-            ('platform', 'HackerRank', 'Good for beginners. Domain-based certifications. Coding interviews.', 'https://hackerrank.com', 'beginner', 4),
-            ('platform', 'Coding Ninjas', 'Structured courses + problems. Topic-wise learning path.', 'https://codingninjas.com', 'beginner', 5),
-            ('platform', 'InterviewBit', 'Company interview preparation. Timed problems. Scaler community.', 'https://interviewbit.com', 'intermediate', 6),
+            ('platform', 'LeetCode', 'Industry standard coding practice', 'https://leetcode.com', 'intermediate', 1),
+            ('platform', 'GeeksForGeeks', 'Theory + practice problems', 'https://geeksforgeeks.org', 'beginner', 2)
         ]
+
         cursor.executemany(
-            'INSERT INTO dsa_resources (category, title, description, url, difficulty, order_index) VALUES (?,?,?,?,?,?)',
+            """
+            INSERT INTO dsa_resources
+            (category, title, description, url, difficulty, order_index)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            """,
             resources
         )
         conn.commit()
-    conn.close()
+
+    cursor.close()
