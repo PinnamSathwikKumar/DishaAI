@@ -23,6 +23,14 @@ class Config:
     MAX_CONTENT_LENGTH = 5 * 1024 * 1024
     ALLOWED_EXTENSIONS = {'pdf', 'docx', 'doc'}
 
+    TECH_KEYWORDS = [ "python", "java", "sql", "react", "flask", "django", "machine learning", "docker", "aws", "git", "github", "tensorflow" ] 
+    STRONG_ACTION_VERBS = [ "developed", "engineered", "optimized", "designed", "implemented", "architected", "deployed", "built" ] 
+    WEAK_ACTION_VERBS = [ "worked", "helped", "did", "made", "handled", "used" ]
+
+    # --- AI / OpenAI ---
+    OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
+    USE_AI_CHATBOT = bool(OPENAI_API_KEY)
+
     # --- Admin ---
     ADMIN_DEFAULT_EMAIL = os.environ.get('ADMIN_EMAIL', 'admin@careerAI.com').lower()
     ADMIN_DEFAULT_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'Admin@123')

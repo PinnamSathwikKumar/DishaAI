@@ -38,7 +38,7 @@ def register():
             errors.append('Password must be at least 6 characters.')
 
         # Check if email already exists
-        existing = query_db('SELECT id FROM users WHERE email = ?', (email,), one=True)
+        existing = query_db('SELECT id FROM users WHERE email = %s', (email,), one=True)
         if existing:
             errors.append('An account with this email already exists.')
 
@@ -50,7 +50,7 @@ def register():
         # Create user
         password_hash = generate_password_hash(password)
         user_id = execute_db(
-            'INSERT INTO users (name, email, password_hash, college, year) VALUES (?, ?, ?, ?, ?)',
+            'INSERT INTO users (name, email, password_hash, college, year) VALUES (%s, %s, %s, %s, %s)',
             (name, email, password_hash, college, year)
         )
         session['user_id'] = user_id
@@ -70,7 +70,7 @@ def login():
         email = request.form.get('email', '').strip().lower()
         password = request.form.get('password', '')
 
-        user = query_db('SELECT * FROM users WHERE email = ?', (email,), one=True)
+        user = query_db('SELECT * FROM users WHERE email = %s', (email,), one=True)
 
         if user and check_password_hash(user['password_hash'], password):
             session['user_id'] = user['id']
@@ -101,7 +101,7 @@ def admin_login():
         email = request.form.get('email', '').strip().lower()
         password = request.form.get('password', '')
 
-        admin = query_db('SELECT * FROM admins WHERE email = ?', (email,), one=True)
+        admin = query_db('SELECT * FROM admins WHERE email = %s', (email,), one=True)
 
         if admin and check_password_hash(admin['password_hash'], password):
             session['admin_id'] = admin['id']

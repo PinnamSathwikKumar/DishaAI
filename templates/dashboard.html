@@ -1,138 +1,161 @@
-{% extends "base.html" %}
-{% block title %}Dashboard{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Dashboard{% endblock %} {% block
+content %}
 <div class="page-container">
-    <!-- Page header -->
-    <div class="page-header">
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <h1>
+        Welcome back,
+        <span class="gradient-text">{{ session.user_name }}</span> 👋
+      </h1>
+      <p class="page-subtitle">Here's your career progress overview</p>
+    </div>
+    <a href="{{ url_for('user.resume') }}" class="btn btn-primary"
+      >Upload Resume →</a
+    >
+  </div>
+
+  <!-- Stats cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">📄</div>
+      <div class="stat-info">
+        <div class="stat-value">{{ stats.resume_scans }}</div>
+        <div class="stat-label">Resume Scans</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">📊</div>
+      <div class="stat-info">
+        <div class="stat-value">
+          {{ stats.avg_ats }}<span class="stat-unit">/100</span>
+        </div>
+        <div class="stat-label">Avg ATS Score</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">💬</div>
+      <div class="stat-info">
+        <div class="stat-value">{{ stats.chats }}</div>
+        <div class="stat-label">Chat Messages</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🎯</div>
+      <div class="stat-info">
+        <div class="stat-value">{{ user.year or 'CSE' }}</div>
+        <div class="stat-label">{{ user.college or 'Student' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions + Recent Resumes -->
+  <div class="dashboard-grid">
+    <!-- Quick Actions -->
+    <div class="glass-card">
+      <h2 class="card-title">Quick Actions</h2>
+      <div class="quick-actions">
+        <a href="{{ url_for('user.resume') }}" class="action-btn">
+          <span class="action-icon">📤</span>
+          <span class="action-label">Upload Resume</span>
+          <span class="action-arrow">→</span>
+        </a>
+        <a href="{{ url_for('user.chat') }}" class="action-btn">
+          <span class="action-icon">🤖</span>
+          <span class="action-label">Chat with AI</span>
+          <span class="action-arrow">→</span>
+        </a>
+        <a href="{{ url_for('user.dsa_roadmap') }}" class="action-btn">
+          <span class="action-icon">🗺️</span>
+          <span class="action-label">DSA Roadmap</span>
+          <span class="action-arrow">→</span>
+        </a>
+        <a href="{{ url_for('user.profile') }}" class="action-btn">
+          <span class="action-icon">👤</span>
+          <span class="action-label">My Profile</span>
+          <span class="action-arrow">→</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Recent Resume Scans -->
+    <div class="glass-card">
+      <h2 class="card-title">Recent Resume Scans</h2>
+      {% if resumes %}
+      <div class="resume-list">
+        {% for r in resumes %}
+        <div class="resume-item">
+          <div class="resume-info">
+            <span class="resume-name">📄 {{ r.filename }}</span>
+            <span class="resume-date"
+              >{{ r.uploaded_at| datefmt('%d %b %Y, %I:%M %p') }}</span
+            >
+          </div>
+          <div
+            class="resume-score-badge score-{{ 'high' if r.ats_score >= 70 else ('mid' if r.ats_score >= 50 else 'low') }}"
+          >
+            {{ r.ats_score }}/100
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <p>No resumes scanned yet.</p>
+        <a href="{{ url_for('user.resume') }}" class="btn btn-primary"
+          >Upload Your First Resume</a
+        >
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Tips Section -->
+  <div class="glass-card tips-card">
+    <h2 class="card-title">💡 Quick Career Tips</h2>
+    <div class="tips-grid">
+      <div class="tip-item">
+        <span class="tip-icon">🔑</span>
         <div>
-            <h1>Welcome back, <span class="gradient-text">{{ session.user_name }}</span> 👋</h1>
-            <p class="page-subtitle">Here's your career progress overview</p>
+          <strong>Keywords Matter</strong>
+          <p>
+            Mirror keywords from the job description in your resume to pass
+            automated screening.
+          </p>
         </div>
-        <a href="{{ url_for('user.resume') }}" class="btn btn-primary">Upload Resume →</a>
+      </div>
+      <div class="tip-item">
+        <span class="tip-icon">📏</span>
+        <div>
+          <strong>1 Page Rule</strong>
+          <p>
+            Keep your resume to 1 page if under 3 years experience. Recruiters
+            spend ~6 seconds on it.
+          </p>
+        </div>
+      </div>
+      <div class="tip-item">
+        <span class="tip-icon">💪</span>
+        <div>
+          <strong>Quantify Impact</strong>
+          <p>
+            Replace "worked on API" with "Built REST API handling 500 req/sec,
+            reducing latency 40%".
+          </p>
+        </div>
+      </div>
+      <div class="tip-item">
+        <span class="tip-icon">🐙</span>
+        <div>
+          <strong>GitHub is Your Portfolio</strong>
+          <p>
+            3+ pinned repos with READMEs and live demos dramatically increase
+            callback rates.
+          </p>
+        </div>
+      </div>
     </div>
-
-    <!-- Stats cards -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-icon">📄</div>
-            <div class="stat-info">
-                <div class="stat-value">{{ stats.resume_scans }}</div>
-                <div class="stat-label">Resume Scans</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon">📊</div>
-            <div class="stat-info">
-                <div class="stat-value">{{ stats.avg_ats }}<span class="stat-unit">/100</span></div>
-                <div class="stat-label">Avg ATS Score</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon">💬</div>
-            <div class="stat-info">
-                <div class="stat-value">{{ stats.chats }}</div>
-                <div class="stat-label">Chat Messages</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon">🎯</div>
-            <div class="stat-info">
-                <div class="stat-value">{{ user.year or 'CSE' }}</div>
-                <div class="stat-label">{{ user.college or 'Student' }}</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Quick Actions + Recent Resumes -->
-    <div class="dashboard-grid">
-        <!-- Quick Actions -->
-        <div class="glass-card">
-            <h2 class="card-title">Quick Actions</h2>
-            <div class="quick-actions">
-                <a href="{{ url_for('user.resume') }}" class="action-btn">
-                    <span class="action-icon">📤</span>
-                    <span class="action-label">Upload Resume</span>
-                    <span class="action-arrow">→</span>
-                </a>
-                <a href="{{ url_for('user.chat') }}" class="action-btn">
-                    <span class="action-icon">🤖</span>
-                    <span class="action-label">Chat with AI</span>
-                    <span class="action-arrow">→</span>
-                </a>
-                <a href="{{ url_for('user.dsa_roadmap') }}" class="action-btn">
-                    <span class="action-icon">🗺️</span>
-                    <span class="action-label">DSA Roadmap</span>
-                    <span class="action-arrow">→</span>
-                </a>
-                <a href="{{ url_for('user.profile') }}" class="action-btn">
-                    <span class="action-icon">👤</span>
-                    <span class="action-label">My Profile</span>
-                    <span class="action-arrow">→</span>
-                </a>
-            </div>
-        </div>
-
-        <!-- Recent Resume Scans -->
-        <div class="glass-card">
-            <h2 class="card-title">Recent Resume Scans</h2>
-            {% if resumes %}
-            <div class="resume-list">
-                {% for r in resumes %}
-                <div class="resume-item">
-                    <div class="resume-info">
-                        <span class="resume-name">📄 {{ r.filename }}</span>
-                        <span class="resume-date">{{ r.uploaded_at[:10] }}</span>
-                    </div>
-                    <div class="resume-score-badge score-{{ 'high' if r.ats_score >= 70 else ('mid' if r.ats_score >= 50 else 'low') }}">
-                        {{ r.ats_score }}/100
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            {% else %}
-            <div class="empty-state">
-                <div class="empty-icon">📭</div>
-                <p>No resumes scanned yet.</p>
-                <a href="{{ url_for('user.resume') }}" class="btn btn-primary">Upload Your First Resume</a>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- Tips Section -->
-    <div class="glass-card tips-card">
-        <h2 class="card-title">💡 Quick Career Tips</h2>
-        <div class="tips-grid">
-            <div class="tip-item">
-                <span class="tip-icon">🔑</span>
-                <div>
-                    <strong>Keywords Matter</strong>
-                    <p>Mirror keywords from the job description in your resume to pass automated screening.</p>
-                </div>
-            </div>
-            <div class="tip-item">
-                <span class="tip-icon">📏</span>
-                <div>
-                    <strong>1 Page Rule</strong>
-                    <p>Keep your resume to 1 page if under 3 years experience. Recruiters spend ~6 seconds on it.</p>
-                </div>
-            </div>
-            <div class="tip-item">
-                <span class="tip-icon">💪</span>
-                <div>
-                    <strong>Quantify Impact</strong>
-                    <p>Replace "worked on API" with "Built REST API handling 500 req/sec, reducing latency 40%".</p>
-                </div>
-            </div>
-            <div class="tip-item">
-                <span class="tip-icon">🐙</span>
-                <div>
-                    <strong>GitHub is Your Portfolio</strong>
-                    <p>3+ pinned repos with READMEs and live demos dramatically increase callback rates.</p>
-                </div>
-            </div>
-        </div>
-    </div>
+  </div>
 </div>
 {% endblock %}

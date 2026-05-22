@@ -1,133 +1,171 @@
-{% extends "base.html" %}
-{% block title %}Admin Dashboard{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Admin Dashboard{% endblock %} {%
+block content %}
 <div class="page-container">
-    <div class="page-header">
-        <div>
-            <h1>Admin <span class="gradient-text">Dashboard</span></h1>
-            <p class="page-subtitle">CareerAI Platform Overview</p>
-        </div>
-        <a href="{{ url_for('admin.resources') }}" class="btn btn-primary">Manage Resources →</a>
+  <div class="page-header">
+    <div>
+      <h1>Admin <span class="gradient-text">Dashboard</span></h1>
+      <p class="page-subtitle">CareerAI Platform Overview</p>
     </div>
+    <a href="{{ url_for('admin.resources') }}" class="btn btn-primary"
+      >Manage Resources →</a
+    >
+  </div>
 
-    <!-- Stats -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-icon">👥</div>
-            <div class="stat-info">
-                <div class="stat-value">{{ stats.users }}</div>
-                <div class="stat-label">Total Users</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon">📄</div>
-            <div class="stat-info">
-                <div class="stat-value">{{ stats.resumes }}</div>
-                <div class="stat-label">Resumes Analyzed</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon">📊</div>
-            <div class="stat-info">
-                <div class="stat-value">{{ stats.avg_ats }}<span class="stat-unit">/100</span></div>
-                <div class="stat-label">Avg ATS Score</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon">📚</div>
-            <div class="stat-info">
-                <div class="stat-value">{{ stats.resources }}</div>
-                <div class="stat-label">Active Resources</div>
-            </div>
-        </div>
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">👥</div>
+      <div class="stat-info">
+        <div class="stat-value">{{ stats.users }}</div>
+        <div class="stat-label">Total Users</div>
+      </div>
     </div>
+    <div class="stat-card">
+      <div class="stat-icon">📄</div>
+      <div class="stat-info">
+        <div class="stat-value">{{ stats.resumes }}</div>
+        <div class="stat-label">Resumes Analyzed</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">📊</div>
+      <div class="stat-info">
+        <div class="stat-value">
+          {{ stats.avg_ats }}<span class="stat-unit">/100</span>
+        </div>
+        <div class="stat-label">Avg ATS Score</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">📚</div>
+      <div class="stat-info">
+        <div class="stat-value">{{ stats.resources }}</div>
+        <div class="stat-label">Active Resources</div>
+      </div>
+    </div>
+  </div>
 
-    <!-- Score Distribution -->
-    {% if score_dist %}
+  <!-- Score Distribution -->
+  {% if score_dist %}
+  <div class="glass-card">
+    <h2 class="card-title">📊 ATS Score Distribution</h2>
+    <div class="score-dist">
+      <div class="dist-item">
+        <div class="dist-bar-wrap">
+          <div
+            class="dist-bar"
+            style="height:{{ [(score_dist.excellent or 0) * 20, 100]|min }}px; background:#00ff88"
+          ></div>
+        </div>
+        <div class="dist-label">Excellent (A)</div>
+        <div class="dist-count">{{ score_dist.excellent or 0 }}</div>
+      </div>
+      <div class="dist-item">
+        <div class="dist-bar-wrap">
+          <div
+            class="dist-bar"
+            style="height:{{ [(score_dist.good or 0) * 20, 100]|min }}px; background:#00d4ff"
+          ></div>
+        </div>
+        <div class="dist-label">Good (B)</div>
+        <div class="dist-count">{{ score_dist.good or 0 }}</div>
+      </div>
+      <div class="dist-item">
+        <div class="dist-bar-wrap">
+          <div
+            class="dist-bar"
+            style="height:{{ [(score_dist.average or 0) * 20, 100]|min }}px; background:#ffd700"
+          ></div>
+        </div>
+        <div class="dist-label">Average (C)</div>
+        <div class="dist-count">{{ score_dist.average or 0 }}</div>
+      </div>
+      <div class="dist-item">
+        <div class="dist-bar-wrap">
+          <div
+            class="dist-bar"
+            style="height:{{ [(score_dist.poor or 0) * 20, 100]|min }}px; background:#ff4444"
+          ></div>
+        </div>
+        <div class="dist-label">Poor (D/F)</div>
+        <div class="dist-count">{{ score_dist.poor or 0 }}</div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="dashboard-grid">
+    <!-- Recent Users -->
     <div class="glass-card">
-        <h2 class="card-title">📊 ATS Score Distribution</h2>
-        <div class="score-dist">
-            <div class="dist-item">
-                <div class="dist-bar-wrap">
-                    <div class="dist-bar" style="height:{{ [(score_dist.excellent or 0) * 20, 100]|min }}px; background:#00ff88"></div>
-                </div>
-                <div class="dist-label">Excellent (A)</div>
-                <div class="dist-count">{{ score_dist.excellent or 0 }}</div>
-            </div>
-            <div class="dist-item">
-                <div class="dist-bar-wrap">
-                    <div class="dist-bar" style="height:{{ [(score_dist.good or 0) * 20, 100]|min }}px; background:#00d4ff"></div>
-                </div>
-                <div class="dist-label">Good (B)</div>
-                <div class="dist-count">{{ score_dist.good or 0 }}</div>
-            </div>
-            <div class="dist-item">
-                <div class="dist-bar-wrap">
-                    <div class="dist-bar" style="height:{{ [(score_dist.average or 0) * 20, 100]|min }}px; background:#ffd700"></div>
-                </div>
-                <div class="dist-label">Average (C)</div>
-                <div class="dist-count">{{ score_dist.average or 0 }}</div>
-            </div>
-            <div class="dist-item">
-                <div class="dist-bar-wrap">
-                    <div class="dist-bar" style="height:{{ [(score_dist.poor or 0) * 20, 100]|min }}px; background:#ff4444"></div>
-                </div>
-                <div class="dist-label">Poor (D/F)</div>
-                <div class="dist-count">{{ score_dist.poor or 0 }}</div>
-            </div>
-        </div>
+      <h2 class="card-title">👥 Recent Users</h2>
+      {% if recent_users %}
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Year</th>
+              <th>Joined</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for u in recent_users %}
+            <tr>
+              <td>{{ u.name }}</td>
+              <td class="muted">{{ u.email }}</td>
+              <td>{{ u.year or '—' }}</td>
+              <td class="muted">
+                {{ u.created_at | datefmt('%d %b %Y, %I:%M %p') }}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="muted">No users yet.</p>
+      {% endif %}
     </div>
-    {% endif %}
 
-    <div class="dashboard-grid">
-        <!-- Recent Users -->
-        <div class="glass-card">
-            <h2 class="card-title">👥 Recent Users</h2>
-            {% if recent_users %}
-            <div class="admin-table-wrap">
-                <table class="admin-table">
-                    <thead><tr><th>Name</th><th>Email</th><th>Year</th><th>Joined</th></tr></thead>
-                    <tbody>
-                        {% for u in recent_users %}
-                        <tr>
-                            <td>{{ u.name }}</td>
-                            <td class="muted">{{ u.email }}</td>
-                            <td>{{ u.year or '—' }}</td>
-                            <td class="muted">{{ u.created_at[:10] }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}<p class="muted">No users yet.</p>{% endif %}
-        </div>
-
-        <!-- Recent Resume Scans -->
-        <div class="glass-card">
-            <h2 class="card-title">📄 Recent Resume Scans</h2>
-            {% if recent_resumes %}
-            <div class="admin-table-wrap">
-                <table class="admin-table">
-                    <thead><tr><th>User</th><th>File</th><th>Score</th><th>Date</th></tr></thead>
-                    <tbody>
-                        {% for r in recent_resumes %}
-                        <tr>
-                            <td>{{ r.user_name }}</td>
-                            <td class="file-name-cell muted">{{ r.filename[:20] }}...</td>
-                            <td>
-                                <span class="score-pill score-{{ 'high' if r.ats_score >= 70 else ('mid' if r.ats_score >= 50 else 'low') }}">
-                                    {{ r.ats_score }}
-                                </span>
-                            </td>
-                            <td class="muted">{{ r.uploaded_at[:10] }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}<p class="muted">No scans yet.</p>{% endif %}
-        </div>
+    <!-- Recent Resume Scans -->
+    <div class="glass-card">
+      <h2 class="card-title">📄 Recent Resume Scans</h2>
+      {% if recent_resumes %}
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>File</th>
+              <th>Score</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in recent_resumes %}
+            <tr>
+              <td>{{ r.user_name }}</td>
+              <td class="file-name-cell muted">{{ r.filename[:20] }}...</td>
+              <td>
+                <span
+                  class="score-pill score-{{ 'high' if r.ats_score >= 70 else ('mid' if r.ats_score >= 50 else 'low') }}"
+                >
+                  {{ r.ats_score }}
+                </span>
+              </td>
+              <td class="muted">
+                {{ r.uploaded_at| datefmt('%d %b %Y, %I:%M %p') }}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="muted">No scans yet.</p>
+      {% endif %}
     </div>
+  </div>
 </div>
 {% endblock %}

@@ -1,115 +1,162 @@
-{% extends "base.html" %}
-{% block title %}Resume Analyzer{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Resume Analyzer{% endblock %} {%
+block content %}
 <div class="page-container">
-    <div class="page-header">
-        <div>
-            <h1>Resume <span class="gradient-text">Analyzer</span></h1>
-            <p class="page-subtitle">Upload your resume for ATS scoring and improvement suggestions</p>
+  <div class="page-header">
+    <div>
+      <h1>Resume <span class="gradient-text">Analyzer</span></h1>
+      <p class="page-subtitle">
+        Upload your resume for ATS scoring and improvement suggestions
+      </p>
+    </div>
+  </div>
+
+  <!-- Upload Card -->
+  <div class="glass-card upload-card">
+    <form
+      method="POST"
+      action="{{ url_for('user.resume') }}"
+      enctype="multipart/form-data"
+      id="uploadForm"
+    >
+      <div
+        class="upload-zone"
+        id="uploadZone"
+        ondragover="handleDragOver(event)"
+        ondragleave="handleDragLeave(event)"
+        ondrop="handleDrop(event)"
+      >
+        <div class="upload-icon">📤</div>
+        <h3>Drag & Drop Your Resume</h3>
+        <p>or click to browse files</p>
+        <p class="upload-hint">Supports PDF and DOCX • Max 5MB</p>
+        <input
+          type="file"
+          name="resume"
+          id="resumeInput"
+          accept=".pdf,.docx,.doc"
+          class="file-input"
+          onchange="handleFileSelect(event)"
+          required
+        />
+        <div id="filePreview" class="file-preview hidden">
+          <span class="file-icon">📄</span>
+          <span id="fileName">—</span>
+          <button type="button" onclick="clearFile()" class="clear-btn">
+            ✕
+          </button>
         </div>
-    </div>
+      </div>
 
-    <!-- Upload Card -->
-    <div class="glass-card upload-card">
-        <form method="POST" action="{{ url_for('user.resume') }}" enctype="multipart/form-data" id="uploadForm">
-            <div class="upload-zone" id="uploadZone"
-                ondragover="handleDragOver(event)"
-                ondragleave="handleDragLeave(event)"
-                ondrop="handleDrop(event)">
-                <div class="upload-icon">📤</div>
-                <h3>Drag & Drop Your Resume</h3>
-                <p>or click to browse files</p>
-                <p class="upload-hint">Supports PDF and DOCX • Max 5MB</p>
-                <input type="file" name="resume" id="resumeInput" accept=".pdf,.docx,.doc"
-                    class="file-input" onchange="handleFileSelect(event)" required>
-                <div id="filePreview" class="file-preview hidden">
-                    <span class="file-icon">📄</span>
-                    <span id="fileName">—</span>
-                    <button type="button" onclick="clearFile()" class="clear-btn">✕</button>
-                </div>
-            </div>
-
-            <div class="upload-info">
-                <div class="info-item">🔒 Your file is analyzed and immediately deleted — never stored permanently</div>
-                <div class="info-item">⚡ Analysis completes in under 5 seconds</div>
-                <div class="info-item">📊 Get detailed breakdown across 5 scoring categories</div>
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-full" id="analyzeBtn" disabled>
-                <span id="btnText">Analyze Resume →</span>
-                <span id="btnLoader" class="hidden">⏳ Analyzing...</span>
-            </button>
-        </form>
-    </div>
-
-    <!-- What we check -->
-    <div class="glass-card">
-        <h2 class="card-title">What We Analyze</h2>
-        <div class="analysis-grid">
-            <div class="analysis-item">
-                <div class="analysis-score-label">Keywords</div>
-                <div class="analysis-bar"><div class="bar-fill" style="width:40%"></div></div>
-                <div class="analysis-desc">40 pts — Technical skills, tools, frameworks match</div>
-            </div>
-            <div class="analysis-item">
-                <div class="analysis-score-label">Action Verbs</div>
-                <div class="analysis-bar"><div class="bar-fill" style="width:20%"></div></div>
-                <div class="analysis-desc">20 pts — Strength of language used to describe experience</div>
-            </div>
-            <div class="analysis-item">
-                <div class="analysis-score-label">Formatting</div>
-                <div class="analysis-bar"><div class="bar-fill" style="width:20%"></div></div>
-                <div class="analysis-desc">20 pts — Section headers, bullet points, dates, structure</div>
-            </div>
-            <div class="analysis-item">
-                <div class="analysis-score-label">Length</div>
-                <div class="analysis-bar"><div class="bar-fill" style="width:10%"></div></div>
-                <div class="analysis-desc">10 pts — Optimal word count (300-700 words)</div>
-            </div>
-            <div class="analysis-item">
-                <div class="analysis-score-label">Contact Info</div>
-                <div class="analysis-bar"><div class="bar-fill" style="width:10%"></div></div>
-                <div class="analysis-desc">10 pts — Email, phone, LinkedIn, GitHub presence</div>
-            </div>
+      <div class="upload-info">
+        <div class="info-item">
+          🔒 Your file is analyzed and immediately deleted — never stored
+          permanently
         </div>
-    </div>
-
-    <!-- History -->
-    {% if history %}
-    <div class="glass-card">
-        <h2 class="card-title">Your Scan History</h2>
-        <div class="history-table-wrap">
-            <table class="history-table">
-                <thead>
-                    <tr>
-                        <th>File</th>
-                        <th>ATS Score</th>
-                        <th>Words</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for r in history %}
-                    <tr>
-                        <td class="file-name-cell">📄 {{ r.filename }}</td>
-                        <td>
-                            <span class="score-pill score-{{ 'high' if r.ats_score >= 70 else ('mid' if r.ats_score >= 50 else 'low') }}">
-                                {{ r.ats_score }}/100
-                            </span>
-                        </td>
-                        <td>{{ r.word_count }}</td>
-                        <td>{{ r.uploaded_at[:10] }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="info-item">⚡ Analysis completes in under 5 seconds</div>
+        <div class="info-item">
+          📊 Get detailed breakdown across 5 scoring categories
         </div>
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-primary btn-full"
+        id="analyzeBtn"
+        disabled
+      >
+        <span id="btnText">Analyze Resume →</span>
+        <span id="btnLoader" class="hidden">⏳ Analyzing...</span>
+      </button>
+    </form>
+  </div>
+
+  <!-- What we check -->
+  <div class="glass-card">
+    <h2 class="card-title">What We Analyze</h2>
+    <div class="analysis-grid">
+      <div class="analysis-item">
+        <div class="analysis-score-label">Keywords</div>
+        <div class="analysis-bar">
+          <div class="bar-fill" style="width: 40%"></div>
+        </div>
+        <div class="analysis-desc">
+          40 pts — Technical skills, tools, frameworks match
+        </div>
+      </div>
+      <div class="analysis-item">
+        <div class="analysis-score-label">Action Verbs</div>
+        <div class="analysis-bar">
+          <div class="bar-fill" style="width: 20%"></div>
+        </div>
+        <div class="analysis-desc">
+          20 pts — Strength of language used to describe experience
+        </div>
+      </div>
+      <div class="analysis-item">
+        <div class="analysis-score-label">Formatting</div>
+        <div class="analysis-bar">
+          <div class="bar-fill" style="width: 20%"></div>
+        </div>
+        <div class="analysis-desc">
+          20 pts — Section headers, bullet points, dates, structure
+        </div>
+      </div>
+      <div class="analysis-item">
+        <div class="analysis-score-label">Length</div>
+        <div class="analysis-bar">
+          <div class="bar-fill" style="width: 10%"></div>
+        </div>
+        <div class="analysis-desc">
+          10 pts — Optimal word count (300-700 words)
+        </div>
+      </div>
+      <div class="analysis-item">
+        <div class="analysis-score-label">Contact Info</div>
+        <div class="analysis-bar">
+          <div class="bar-fill" style="width: 10%"></div>
+        </div>
+        <div class="analysis-desc">
+          10 pts — Email, phone, LinkedIn, GitHub presence
+        </div>
+      </div>
     </div>
-    {% endif %}
+  </div>
+
+  <!-- History -->
+  {% if history %}
+  <div class="glass-card">
+    <h2 class="card-title">Your Scan History</h2>
+    <div class="history-table-wrap">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>File</th>
+            <th>ATS Score</th>
+            <th>Words</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in history %}
+          <tr>
+            <td class="file-name-cell">📄 {{ r.filename }}</td>
+            <td>
+              <span
+                class="score-pill score-{{ 'high' if r.ats_score >= 70 else ('mid' if r.ats_score >= 50 else 'low') }}"
+              >
+                {{ r.ats_score }}/100
+              </span>
+            </td>
+            <td>{{ r.word_count }}</td>
+            <td>{{ r.uploaded_at| datefmt('%d %b %Y, %I:%M %p')}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
 </div>
-{% endblock %}
-
-{% block extra_js %}
+{% endblock %} {% block extra_js %}
 <script src="{{ url_for('static', filename='js/resume.js') }}"></script>
 {% endblock %}

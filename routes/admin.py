@@ -91,7 +91,7 @@ def add_resource():
         return redirect(url_for('admin.resources'))
 
     execute_db(
-        'INSERT INTO dsa_resources (category, title, description, url, difficulty, order_index) VALUES (?,?,?,?,?,?)',
+        'INSERT INTO dsa_resources (category, title, description, url, difficulty, order_index) VALUES (%s,%s,%s,%s,%s,%s)',
         (category, title, description, url, difficulty, int(order_index))
     )
     flash(f'Resource "{title}" added successfully!', 'success')
@@ -101,7 +101,7 @@ def add_resource():
 @admin_bp.route('/resources/edit/<int:res_id>', methods=['GET', 'POST'])
 @admin_required
 def edit_resource(res_id):
-    resource = query_db('SELECT * FROM dsa_resources WHERE id = ?', (res_id,), one=True)
+    resource = query_db('SELECT * FROM dsa_resources WHERE id = %s', (res_id,), one=True)
     if not resource:
         flash('Resource not found.', 'error')
         return redirect(url_for('admin.resources'))
@@ -114,7 +114,7 @@ def edit_resource(res_id):
         is_active = 1 if request.form.get('is_active') else 0
 
         execute_db(
-            'UPDATE dsa_resources SET title=?, description=?, url=?, difficulty=?, is_active=? WHERE id=?',
+            'UPDATE dsa_resources SET title=%s, description=%s, url=%s, difficulty=%s, is_active=%s WHERE id=%s',
             (title, description, url, difficulty, is_active, res_id)
         )
         flash('Resource updated.', 'success')
@@ -126,7 +126,7 @@ def edit_resource(res_id):
 @admin_bp.route('/resources/delete/<int:res_id>', methods=['POST'])
 @admin_required
 def delete_resource(res_id):
-    execute_db('DELETE FROM dsa_resources WHERE id = ?', (res_id,))
+    execute_db('DELETE FROM dsa_resources WHERE id = %s', (res_id,))
     flash('Resource deleted.', 'success')
     return redirect(url_for('admin.resources'))
 
@@ -161,7 +161,7 @@ def add_suggestion():
         return redirect(url_for('admin.suggestions'))
 
     execute_db(
-        'INSERT INTO suggestions (category, title, content) VALUES (?,?,?)',
+        'INSERT INTO suggestions (category, title, content) VALUES (%s,%s,%s)',
         (category, title, content)
     )
     flash('Suggestion added.', 'success')
@@ -171,6 +171,6 @@ def add_suggestion():
 @admin_bp.route('/suggestions/delete/<int:sug_id>', methods=['POST'])
 @admin_required
 def delete_suggestion(sug_id):
-    execute_db('DELETE FROM suggestions WHERE id = ?', (sug_id,))
+    execute_db('DELETE FROM suggestions WHERE id = %s', (sug_id,))
     flash('Suggestion deleted.', 'success')
     return redirect(url_for('admin.suggestions'))

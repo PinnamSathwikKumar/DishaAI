@@ -33,7 +33,7 @@ def chat():
 
     # Load recent chat history for context
     history = query_db(
-        'SELECT role, message FROM chat_history WHERE user_id = ? ORDER BY created_at DESC LIMIT 10',
+        'SELECT role, message FROM chat_history WHERE user_id = %s ORDER BY created_at DESC LIMIT 10',
         (user_id,)
     )
     history = list(reversed(history))  # Chronological order
@@ -43,11 +43,11 @@ def chat():
 
     # Save both messages to history
     execute_db(
-        'INSERT INTO chat_history (user_id, role, message) VALUES (?, ?, ?)',
+        'INSERT INTO chat_history (user_id, role, message) VALUES (%s, %s, %s)',
         (user_id, 'user', user_message)
     )
     execute_db(
-        'INSERT INTO chat_history (user_id, role, message) VALUES (?, ?, ?)',
+        'INSERT INTO chat_history (user_id, role, message) VALUES (%s, %s, %s)',
         (user_id, 'assistant', bot_response)
     )
 
@@ -62,7 +62,7 @@ def chat():
 def clear_chat():
     """Clear user's chat history."""
     user_id = session['user_id']
-    execute_db('DELETE FROM chat_history WHERE user_id = ?', (user_id,))
+    execute_db('DELETE FROM chat_history WHERE user_id = %s', (user_id,))
     return jsonify({'status': 'cleared'})
 
 
@@ -72,7 +72,7 @@ def stats():
     """Return user stats as JSON."""
     user_id = session['user_id']
     resumes = query_db(
-        'SELECT ats_score, uploaded_at FROM resumes WHERE user_id = ? ORDER BY uploaded_at ASC',
+        'SELECT ats_score, uploaded_at FROM resumes WHERE user_id = %s ORDER BY uploaded_at ASC',
         (user_id,)
     )
     return jsonify({

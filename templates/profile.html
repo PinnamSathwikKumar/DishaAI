@@ -1,49 +1,54 @@
-{% extends "base.html" %}
-{% block title %}My Profile{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}My Profile{% endblock %} {% block
+content %}
 <div class="page-container">
-    <div class="page-header">
-        <h1>My <span class="gradient-text">Profile</span></h1>
+  <div class="page-header">
+    <h1>My <span class="gradient-text">Profile</span></h1>
+  </div>
+
+  <div class="profile-grid">
+    <div class="glass-card profile-card">
+      <div class="profile-avatar">{{ user.name[0].upper() }}</div>
+      <h2 class="profile-name">{{ user.name }}</h2>
+      <p class="profile-email">{{ user.email }}</p>
+      {% if user.college %}
+      <p class="profile-meta">🏫 {{ user.college }}</p>
+      {% endif %} {% if user.year %}
+      <p class="profile-meta">📅 {{ user.year }}</p>
+      {% endif %}
+      <p class="profile-joined">
+        Joined {{ user.created_at| datefmt('%d %b %Y') }}
+      </p>
     </div>
 
-    <div class="profile-grid">
-        <div class="glass-card profile-card">
-            <div class="profile-avatar">{{ user.name[0].upper() }}</div>
-            <h2 class="profile-name">{{ user.name }}</h2>
-            <p class="profile-email">{{ user.email }}</p>
-            {% if user.college %}
-            <p class="profile-meta">🏫 {{ user.college }}</p>
-            {% endif %}
-            {% if user.year %}
-            <p class="profile-meta">📅 {{ user.year }}</p>
-            {% endif %}
-            <p class="profile-joined">Joined {{ user.created_at[:10] }}</p>
+    <div class="glass-card">
+      <h2 class="card-title">Resume History</h2>
+      {% if resumes %}
+      <div class="resume-list">
+        {% for r in resumes %}
+        <div class="resume-item">
+          <div class="resume-info">
+            <span class="resume-name">📄 {{ r.filename }}</span>
+            <span class="resume-date"
+              >{{ r.uploaded_at| datefmt('%d %b %Y, %I:%M %p') }}</span
+            >
+          </div>
+          <span
+            class="score-pill score-{{ 'high' if r.ats_score >= 70 else ('mid' if r.ats_score >= 50 else 'low') }}"
+          >
+            {{ r.ats_score }}/100
+          </span>
         </div>
-
-        <div class="glass-card">
-            <h2 class="card-title">Resume History</h2>
-            {% if resumes %}
-            <div class="resume-list">
-                {% for r in resumes %}
-                <div class="resume-item">
-                    <div class="resume-info">
-                        <span class="resume-name">📄 {{ r.filename }}</span>
-                        <span class="resume-date">{{ r.uploaded_at[:10] }}</span>
-                    </div>
-                    <span class="score-pill score-{{ 'high' if r.ats_score >= 70 else ('mid' if r.ats_score >= 50 else 'low') }}">
-                        {{ r.ats_score }}/100
-                    </span>
-                </div>
-                {% endfor %}
-            </div>
-            {% else %}
-            <div class="empty-state">
-                <p>No resumes uploaded yet.</p>
-                <a href="{{ url_for('user.resume') }}" class="btn btn-primary">Upload Resume</a>
-            </div>
-            {% endif %}
-        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <p>No resumes uploaded yet.</p>
+        <a href="{{ url_for('user.resume') }}" class="btn btn-primary"
+          >Upload Resume</a
+        >
+      </div>
+      {% endif %}
     </div>
+  </div>
 </div>
 {% endblock %}

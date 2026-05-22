@@ -10,8 +10,6 @@ from flask import current_app, g
 
 def get_db():
     """Get MySQL connection stored on Flask g object."""
-    print("DB HOST:", current_app.config['DB_HOST'])
-    print("DB USER:", current_app.config['DB_USER'])
     if 'db' not in g:
         try:
             g.db = mysql.connector.connect(

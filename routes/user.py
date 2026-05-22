@@ -40,18 +40,18 @@ def dashboard():
     user_id = session['user_id']
 
     # Get user info
-    user = query_db('SELECT * FROM users WHERE id = ?', (user_id,), one=True)
+    user = query_db('SELECT * FROM users WHERE id = %s', (user_id,), one=True)
 
     # Get recent resume scans
     resumes = query_db(
-        'SELECT * FROM resumes WHERE user_id = ? ORDER BY uploaded_at DESC LIMIT 5',
+        'SELECT * FROM resumes WHERE user_id = %s ORDER BY uploaded_at DESC LIMIT 5',
         (user_id,)
     )
 
     # Stats
-    resume_count = query_db('SELECT COUNT(*) as c FROM resumes WHERE user_id = ?', (user_id,), one=True)
-    avg_score = query_db('SELECT AVG(ats_score) as avg FROM resumes WHERE user_id = ?', (user_id,), one=True)
-    chat_count = query_db('SELECT COUNT(*) as c FROM chat_history WHERE user_id = ? AND role = "user"', (user_id,), one=True)
+    resume_count = query_db('SELECT COUNT(*) as c FROM resumes WHERE user_id = %s', (user_id,), one=True)
+    avg_score = query_db('SELECT AVG(ats_score) as avg FROM resumes WHERE user_id = %s', (user_id,), one=True)
+    chat_count = query_db('SELECT COUNT(*) as c FROM chat_history WHERE user_id = %s AND role = "user"', (user_id,), one=True)
 
     stats = {
         'resume_scans': resume_count['c'] if resume_count else 0,
@@ -105,7 +105,7 @@ def resume():
             resume_id = execute_db(
                 '''INSERT INTO resumes 
                    (user_id, filename, ats_score, word_count, skills_found, missing_keywords, weak_verbs_found, suggestions)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
+                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s)''',
                 (
                     user_id,
                     filename,
@@ -154,7 +154,7 @@ def resume():
 
     # GET - show upload form with history
     history = query_db(
-        'SELECT * FROM resumes WHERE user_id = ? ORDER BY uploaded_at DESC LIMIT 10',
+        'SELECT * FROM resumes WHERE user_id = %s ORDER BY uploaded_at DESC LIMIT 10',
         (user_id,)
     )
     return render_template('resume_upload.html', history=history)
@@ -175,7 +175,7 @@ def resume_result():
 def chat():
     user_id = session['user_id']
     history = query_db(
-        'SELECT role, message, created_at FROM chat_history WHERE user_id = ? ORDER BY created_at ASC',
+        'SELECT role, message, created_at FROM chat_history WHERE user_id = %s ORDER BY created_at ASC',
         (user_id,)
     )
     return render_template('chat.html', history=history)
@@ -201,6 +201,6 @@ def dsa_roadmap():
 @login_required
 def profile():
     user_id = session['user_id']
-    user = query_db('SELECT * FROM users WHERE id = ?', (user_id,), one=True)
-    resumes = query_db('SELECT * FROM resumes WHERE user_id = ? ORDER BY uploaded_at DESC', (user_id,))
+    user = query_db('SELECT * FROM users WHERE id = %s', (user_id,), one=True)
+    resumes = query_db('SELECT * FROM resumes WHERE user_id = %s ORDER BY uploaded_at DESC', (user_id,))
     return render_template('profile.html', user=user, resumes=resumes)

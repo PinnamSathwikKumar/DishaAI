@@ -4,6 +4,7 @@ AI-powered career assistant platform for CSE students
 """
 
 import os
+from datetime import datetime
 from flask import Flask
 from config import Config
 from database.db import init_db, close_db
@@ -26,6 +27,17 @@ def create_app(config_class=Config):
 
     # Close DB after each request
     app.teardown_appcontext(close_db)
+
+    # ---------------------------------------- 
+    # Jinja Date Formatting Filter 
+    # ----------------------------------------
+    @app.template_filter('datefmt')
+    def datefmt(value, fmt='%Y-%m-%d'):
+        if value is None:
+            return "N/A"
+        if isinstance(value, datetime):
+             return value.strftime(fmt)
+        return value
 
     # Register blueprints
     app.register_blueprint(auth_bp)
