@@ -13,10 +13,11 @@ class Config:
     DEBUG = os.environ.get('FLASK_DEBUG', 'False') == 'True'
 
     # --- MySQL Database ---
-    DB_HOST = os.environ.get('DB_HOST', '127.0.0.1')
-    DB_USER = os.environ.get('DB_USER', 'root')
-    DB_PASSWORD = os.environ.get('DB_PASSWORD', '@Sathwik2005')
-    DB_NAME = os.environ.get('DB_NAME', 'career_ai')
+    DB_HOST = os.getenv("MYSQLHOST")
+    DB_USER = os.getenv("MYSQLUSER")
+    DB_PASSWORD = os.getenv("MYSQLPASSWORD")
+    DB_NAME = os.getenv("MYSQLDATABASE")
+    DB_PORT = os.getenv("MYSQLPORT")
 
     # --- File Upload ---
     UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
