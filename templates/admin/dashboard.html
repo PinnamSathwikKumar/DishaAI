@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block title %}Admin Dashboard{% endblock %} {%
+{% extends "base.html" %} {% block title %} Admin Dashboard {% endblock %} {%
 block content %}
 <div class="page-container">
   <div class="page-header">
@@ -54,7 +54,7 @@ block content %}
         <div class="dist-bar-wrap">
           <div
             class="dist-bar"
-            style="height:{{ [(score_dist.excellent or 0) * 20, 100]|min }}px; background:#00ff88"
+            style="height:{{ 100 if (score_dist.excellent or 0) * 20 > 100 else (score_dist.excellent or 0) * 20 }}px; background:#00d4ff"
           ></div>
         </div>
         <div class="dist-label">Excellent (A)</div>
@@ -64,7 +64,7 @@ block content %}
         <div class="dist-bar-wrap">
           <div
             class="dist-bar"
-            style="height:{{ [(score_dist.good or 0) * 20, 100]|min }}px; background:#00d4ff"
+            style="height:{{ 100 if (score_dist.good or 0) * 20 > 100 else (score_dist.good or 0) * 20 }}px; background:#00d4ff"
           ></div>
         </div>
         <div class="dist-label">Good (B)</div>
@@ -74,7 +74,7 @@ block content %}
         <div class="dist-bar-wrap">
           <div
             class="dist-bar"
-            style="height:{{ [(score_dist.average or 0) * 20, 100]|min }}px; background:#ffd700"
+            style="height:{{ 100 if (score_dist.average or 0) * 20 > 100 else (score_dist.average or 0) * 20 }}px; background:#ffd700"
           ></div>
         </div>
         <div class="dist-label">Average (C)</div>
@@ -84,7 +84,7 @@ block content %}
         <div class="dist-bar-wrap">
           <div
             class="dist-bar"
-            style="height:{{ [(score_dist.poor or 0) * 20, 100]|min }}px; background:#ff4444"
+            style="height:{{ 100 if (score_dist.poor or 0) * 20 > 100 else (score_dist.poor or 0) * 20 }}px; background:#ff4444"
           ></div>
         </div>
         <div class="dist-label">Poor (D/F)</div>
