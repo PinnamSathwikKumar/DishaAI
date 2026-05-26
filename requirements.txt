@@ -7,7 +7,7 @@
 # ─── Core Framework ────────────────────────────────────────
 Flask==3.0.3
 Werkzeug==3.0.3            # Password hashing, secure filename, request utils
-
+mysql-connector-python==8.0.33  # MySQL database connector
 # ─── Environment Variables ─────────────────────────────────
 python-dotenv==1.0.1       # Loads .env file into os.environ
 
