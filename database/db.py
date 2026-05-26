@@ -14,7 +14,7 @@ def get_db():
         try:
             g.db = mysql.connector.connect(
             host=current_app.config['DB_HOST'],
-            port=current_app.config['DB_PORT'],
+            port=int(current_app.config['DB_PORT']),
             user=current_app.config['DB_USER'],
             password=current_app.config['DB_PASSWORD'],
             database=current_app.config['DB_NAME'],
