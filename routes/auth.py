@@ -55,7 +55,7 @@ def register():
         )
         session['user_id'] = user_id
         session['user_name'] = name
-        flash('Welcome to CareerAI! 🎉', 'success')
+        flash('Welcome to DishaAI! 🎉', 'success')
         return redirect(url_for('user.dashboard'))
 
     return render_template('register.html', form_data={})

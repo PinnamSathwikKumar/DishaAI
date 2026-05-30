@@ -1,34 +1,49 @@
-{% extends "base.html" %}
-{% block title %}Login{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Login{% endblock %} {% block content
+%}
 <div class="auth-page">
-    <div class="auth-card">
-        <div class="auth-header">
-            <div class="auth-logo">⚡</div>
-            <h1>Welcome Back</h1>
-            <p>Log in to your CareerAI account</p>
-        </div>
-
-        <form method="POST" action="{{ url_for('auth.login') }}" class="auth-form">
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" placeholder="you@college.edu" required
-                    class="form-input" autocomplete="email">
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="••••••••" required
-                    class="form-input" autocomplete="current-password">
-            </div>
-            <button type="submit" class="btn btn-primary btn-full">
-                Login <span>→</span>
-            </button>
-        </form>
-
-        <div class="auth-footer">
-            <p>Don't have an account? <a href="{{ url_for('auth.register') }}">Sign up free →</a></p>
-        </div>
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-logo">⚡</div>
+      <h1>Welcome Back</h1>
+      <p>Log in to your DishaAI account</p>
     </div>
+
+    <form method="POST" action="{{ url_for('auth.login') }}" class="auth-form">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="you@college.edu"
+          required
+          class="form-input"
+          autocomplete="email"
+        />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="••••••••"
+          required
+          class="form-input"
+          autocomplete="current-password"
+        />
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">
+        Login <span>→</span>
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <p>
+        Don't have an account?
+        <a href="{{ url_for('auth.register') }}">Sign up free →</a>
+      </p>
+    </div>
+  </div>
 </div>
 {% endblock %}
