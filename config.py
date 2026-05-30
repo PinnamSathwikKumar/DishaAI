@@ -12,12 +12,8 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production-xyz123')
     DEBUG = os.environ.get('FLASK_DEBUG', 'False') == 'True'
 
-    # --- MySQL Database ---
-    DB_HOST = os.getenv("MYSQLHOST")
-    DB_USER = os.getenv("MYSQLUSER")
-    DB_PASSWORD = os.getenv("MYSQLPASSWORD")
-    DB_NAME = os.getenv("MYSQLDATABASE")
-    DB_PORT = os.getenv("MYSQLPORT")
+    # --- PostgreSQL Database ---
+    DATABASE_URL = os.environ.get("DATABASE_URL")
 
     # --- File Upload ---
     UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'static', 'uploads')

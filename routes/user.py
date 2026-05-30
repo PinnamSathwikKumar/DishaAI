@@ -51,7 +51,7 @@ def dashboard():
     # Stats
     resume_count = query_db('SELECT COUNT(*) as c FROM resumes WHERE user_id = %s', (user_id,), one=True)
     avg_score = query_db('SELECT AVG(ats_score) as avg FROM resumes WHERE user_id = %s', (user_id,), one=True)
-    chat_count = query_db('SELECT COUNT(*) as c FROM chat_history WHERE user_id = %s AND role = "user"', (user_id,), one=True)
+    chat_count = query_db("SELECT COUNT(*) as c FROM chat_history WHERE user_id = %s AND role = 'user'", (user_id,), one=True)
 
     stats = {
         'resume_scans': resume_count['c'] if resume_count else 0,
@@ -186,13 +186,13 @@ def chat():
 def dsa_roadmap():
     # Fetch resources grouped by category
     topics = query_db(
-        "SELECT * FROM dsa_resources WHERE category='topic' AND is_active=1 ORDER BY order_index",
+        "SELECT * FROM dsa_resources WHERE category='topic' AND is_active ORDER BY order_index",
     )
     youtube = query_db(
-        "SELECT * FROM dsa_resources WHERE category='youtube' AND is_active=1 ORDER BY order_index",
+        "SELECT * FROM dsa_resources WHERE category='youtube' AND is_active ORDER BY order_index",
     )
     platforms = query_db(
-        "SELECT * FROM dsa_resources WHERE category='platform' AND is_active=1 ORDER BY order_index",
+        "SELECT * FROM dsa_resources WHERE category='platform' AND is_active ORDER BY order_index",
     )
     return render_template('dsa_roadmap.html', topics=topics, youtube=youtube, platforms=platforms)
 
@@ -200,7 +200,37 @@ def dsa_roadmap():
 @user_bp.route('/profile')
 @login_required
 def profile():
-    user_id = session['user_id']
-    user = query_db('SELECT * FROM users WHERE id = %s', (user_id,), one=True)
-    resumes = query_db('SELECT * FROM resumes WHERE user_id = %s ORDER BY uploaded_at DESC', (user_id,))
-    return render_template('profile.html', user=user, resumes=resumes)
+
+    user_id = session.get('user_id')
+
+    if not user_id:
+        flash('Please login first', 'error')
+        return redirect(url_for('auth.login'))
+
+    user = query_db(
+        'SELECT * FROM users WHERE id = %s',
+        (user_id,),
+        one=True
+    )
+
+    if not user:
+        session.clear()
+
+        flash('User account not found', 'error')
+        return redirect(url_for('auth.login'))
+
+    resumes = query_db(
+        '''
+        SELECT *
+        FROM resumes
+        WHERE user_id = %s
+        ORDER BY uploaded_at DESC
+        ''',
+        (user_id,)
+    )
+
+    return render_template(
+        'profile.html',
+        user=user,
+        resumes=resumes
+    )

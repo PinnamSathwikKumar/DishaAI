@@ -28,7 +28,7 @@ def dashboard():
     user_count = query_db('SELECT COUNT(*) as c FROM users', one=True)
     resume_count = query_db('SELECT COUNT(*) as c FROM resumes', one=True)
     avg_score = query_db('SELECT AVG(ats_score) as avg FROM resumes', one=True)
-    resource_count = query_db('SELECT COUNT(*) as c FROM dsa_resources WHERE is_active=1', one=True)
+    resource_count = query_db('SELECT COUNT(*) as c FROM dsa_resources WHERE is_active', one=True)
 
     stats = {
         'users': user_count['c'],
@@ -111,7 +111,7 @@ def edit_resource(res_id):
         description = request.form.get('description', '').strip()
         url = request.form.get('url', '').strip()
         difficulty = request.form.get('difficulty', 'intermediate')
-        is_active = 1 if request.form.get('is_active') else 0
+        is_active = TRUE if request.form.get('is_active') else 0
 
         execute_db(
             'UPDATE dsa_resources SET title=%s, description=%s, url=%s, difficulty=%s, is_active=%s WHERE id=%s',
@@ -141,6 +141,28 @@ def users():
     )
     return render_template('admin/users.html', users=all_users)
 
+@admin_bp.route('/users/delete/<int:user_id>', methods=['POST'])
+@admin_required
+def delete_user(user_id):
+
+    user = query_db(
+        'SELECT * FROM users WHERE id = %s',
+        (user_id,),
+        one=True
+    )
+
+    if not user:
+        flash('User not found.', 'error')
+        return redirect(url_for('admin.users'))
+
+    execute_db(
+        'DELETE FROM users WHERE id = %s',
+        (user_id,)
+    )
+
+    flash(f'User "{user["name"]}" deleted successfully.', 'success')
+
+    return redirect(url_for('admin.users'))
 
 @admin_bp.route('/suggestions')
 @admin_required

@@ -89,7 +89,9 @@ def logout():
     flash('You have been logged out.', 'info')
     return redirect(url_for('auth.index'))
 
-
+@auth_bp.route("/legal")
+def legal():
+    return render_template("legal.html")
 # ─── Admin Auth ───────────────────────────────────────────────────────────────
 
 @auth_bp.route('/admin/login', methods=['GET', 'POST'])

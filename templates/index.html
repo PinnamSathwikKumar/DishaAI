@@ -1,143 +1,176 @@
-{% extends "base.html" %}
-{% block title %}CareerAI — Launch Your Tech Career{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}DishaAI — Launch Your Tech Career{%
+endblock %} {% block content %}
 <!-- Hero Section -->
 <section class="hero">
-    <div class="hero-content">
-        <div class="hero-badge">🚀 AI-Powered Career Platform</div>
-        <h1 class="hero-title">
-            Launch Your <span class="gradient-text">Tech Career</span><br>
-            with AI Guidance
-        </h1>
-        <p class="hero-subtitle">
-            Get your resume ATS-scored, receive personalized improvement suggestions,
-            chat with an AI career advisor, and follow structured DSA roadmaps — all in one platform built for CSE students.
-        </p>
-        <div class="hero-cta">
-            <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">
-                Start for Free <span>→</span>
-            </a>
-            <a href="#features" class="btn btn-ghost btn-lg">See Features</a>
-        </div>
-        <div class="hero-stats">
-            <div class="hero-stat"><span class="stat-num">ATS</span><span>Resume Scoring</span></div>
-            <div class="hero-stat"><span class="stat-num">AI</span><span>Chat Advisor</span></div>
-            <div class="hero-stat"><span class="stat-num">DSA</span><span>Roadmaps</span></div>
-            <div class="hero-stat"><span class="stat-num">Free</span><span>Forever</span></div>
-        </div>
+  <div class="hero-content">
+    <div class="hero-badge">🚀 AI-Powered Career Platform</div>
+    <h1 class="hero-title">
+      Launch Your <span class="gradient-text">Tech Career</span><br />
+      with AI Guidance
+    </h1>
+    <p class="hero-subtitle">
+      Get your resume ATS-scored, receive personalized improvement suggestions,
+      chat with an AI career advisor, and follow structured DSA roadmaps — all
+      in one platform built for students.
+    </p>
+    <div class="hero-cta">
+      <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">
+        Start for Free <span>→</span>
+      </a>
+      <a href="#features" class="btn btn-ghost btn-lg">See Features</a>
     </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="stat-num">ATS</span><span>Resume Scoring</span>
+      </div>
+      <div class="hero-stat">
+        <span class="stat-num">AI</span><span>Chat Advisor</span>
+      </div>
+      <div class="hero-stat">
+        <span class="stat-num">DSA</span><span>Roadmaps</span>
+      </div>
+      <div class="hero-stat">
+        <span class="stat-num">Free</span><span>Forever</span>
+      </div>
+    </div>
+  </div>
 
-    <!-- Floating cards visual -->
-    <div class="hero-visual">
-        <div class="float-card card-ats">
-            <div class="fc-label">ATS Score</div>
-            <div class="fc-score">82/100</div>
-            <div class="fc-bar"><div class="fc-fill" style="width:82%"></div></div>
-            <div class="fc-grade grade-b">Grade B — Good</div>
-        </div>
-        <div class="float-card card-chat">
-            <div class="fc-msg bot">🤖 Want a DSA roadmap?</div>
-            <div class="fc-msg user">Yes! For placements</div>
-            <div class="fc-msg bot">📍 Start with Arrays → Trees → DP...</div>
-        </div>
-        <div class="float-card card-skill">
-            <div class="fc-label">Skills Found</div>
-            <div class="fc-tags">
-                <span class="tag">Python</span><span class="tag">SQL</span>
-                <span class="tag">React</span><span class="tag">Git</span>
-            </div>
-        </div>
+  <!-- Floating cards visual -->
+  <div class="hero-visual">
+    <div class="float-card card-ats">
+      <div class="fc-label">ATS Score</div>
+      <div class="fc-score">82/100</div>
+      <div class="fc-bar"><div class="fc-fill" style="width: 82%"></div></div>
+      <div class="fc-grade grade-b">Grade B — Good</div>
     </div>
+    <div class="float-card card-chat">
+      <div class="fc-msg bot">🤖 Want a DSA roadmap?</div>
+      <div class="fc-msg user">Yes! For placements</div>
+      <div class="fc-msg bot">📍 Start with Arrays → Trees → DP...</div>
+    </div>
+    <div class="float-card card-skill">
+      <div class="fc-label">Skills Found</div>
+      <div class="fc-tags">
+        <span class="tag">Python</span><span class="tag">SQL</span>
+        <span class="tag">React</span><span class="tag">Git</span>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- Features -->
 <section class="features" id="features">
-    <div class="section-header">
-        <div class="section-badge">Features</div>
-        <h2>Everything You Need to <span class="gradient-text">Get Hired</span></h2>
+  <div class="section-header">
+    <div class="section-badge">Features</div>
+    <h2>Everything You Need to <span class="gradient-text">Get Hired</span></h2>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">📄</div>
+      <h3>ATS Resume Scorer</h3>
+      <p>
+        Upload your PDF or DOCX resume and get an instant ATS compatibility
+        score with detailed breakdown across keywords, formatting, action verbs,
+        and contact completeness.
+      </p>
+      <ul class="feature-list">
+        <li>✓ Keyword gap analysis</li>
+        <li>✓ Action verb strength check</li>
+        <li>✓ Contact info audit</li>
+        <li>✓ Formatting signals</li>
+      </ul>
     </div>
-    <div class="features-grid">
-        <div class="feature-card">
-            <div class="feature-icon">📄</div>
-            <h3>ATS Resume Scorer</h3>
-            <p>Upload your PDF or DOCX resume and get an instant ATS compatibility score with detailed breakdown across keywords, formatting, action verbs, and contact completeness.</p>
-            <ul class="feature-list">
-                <li>✓ Keyword gap analysis</li>
-                <li>✓ Action verb strength check</li>
-                <li>✓ Contact info audit</li>
-                <li>✓ Formatting signals</li>
-            </ul>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">🤖</div>
-            <h3>AI Career Chatbot</h3>
-            <p>Chat with an intelligent career advisor that gives you personalized roadmaps for DSA, Python, SQL, System Design, Machine Learning, and placement strategies.</p>
-            <ul class="feature-list">
-                <li>✓ DSA preparation roadmap</li>
-                <li>✓ Internship strategies</li>
-                <li>✓ Interview preparation</li>
-                <li>✓ Domain-specific guidance</li>
-            </ul>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">🗺️</div>
-            <h3>DSA Roadmap & Resources</h3>
-            <p>Curated topic-wise learning paths with the best YouTube channels, practice platforms, and structured preparation plans for placement season.</p>
-            <ul class="feature-list">
-                <li>✓ Topic-wise roadmap</li>
-                <li>✓ YouTube recommendations</li>
-                <li>✓ Practice platforms</li>
-                <li>✓ Difficulty-based sorting</li>
-            </ul>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">📊</div>
-            <h3>Progress Dashboard</h3>
-            <p>Track your resume score improvements over time, view your chat history, and monitor your preparation progress all from a clean, unified dashboard.</p>
-            <ul class="feature-list">
-                <li>✓ ATS score history</li>
-                <li>✓ Resume upload history</li>
-                <li>✓ Chat conversations saved</li>
-                <li>✓ Quick action shortcuts</li>
-            </ul>
-        </div>
+    <div class="feature-card">
+      <div class="feature-icon">🤖</div>
+      <h3>AI Career Chatbot</h3>
+      <p>
+        Chat with an intelligent career advisor that gives you personalized
+        roadmaps for DSA, Python, SQL, System Design, Machine Learning, and
+        placement strategies.
+      </p>
+      <ul class="feature-list">
+        <li>✓ DSA preparation roadmap</li>
+        <li>✓ Internship strategies</li>
+        <li>✓ Interview preparation</li>
+        <li>✓ Domain-specific guidance</li>
+      </ul>
     </div>
+    <div class="feature-card">
+      <div class="feature-icon">🗺️</div>
+      <h3>DSA Roadmap & Resources</h3>
+      <p>
+        Curated topic-wise learning paths with the best YouTube channels,
+        practice platforms, and structured preparation plans for placement
+        season.
+      </p>
+      <ul class="feature-list">
+        <li>✓ Topic-wise roadmap</li>
+        <li>✓ YouTube recommendations</li>
+        <li>✓ Practice platforms</li>
+        <li>✓ Difficulty-based sorting</li>
+      </ul>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <h3>Progress Dashboard</h3>
+      <p>
+        Track your resume score improvements over time, view your chat history,
+        and monitor your preparation progress all from a clean, unified
+        dashboard.
+      </p>
+      <ul class="feature-list">
+        <li>✓ ATS score history</li>
+        <li>✓ Resume upload history</li>
+        <li>✓ Chat conversations saved</li>
+        <li>✓ Quick action shortcuts</li>
+      </ul>
+    </div>
+  </div>
 </section>
 
 <!-- How it works -->
 <section class="how-it-works">
-    <div class="section-header">
-        <div class="section-badge">Process</div>
-        <h2>Get Started in <span class="gradient-text">3 Steps</span></h2>
+  <div class="section-header">
+    <div class="section-badge">Process</div>
+    <h2>Get Started in <span class="gradient-text">3 Steps</span></h2>
+  </div>
+  <div class="steps-row">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h3>Create Account</h3>
+      <p>
+        Sign up with your email and college details. Free forever — no credit
+        card needed.
+      </p>
     </div>
-    <div class="steps-row">
-        <div class="step">
-            <div class="step-num">01</div>
-            <h3>Create Account</h3>
-            <p>Sign up with your email and college details. Free forever — no credit card needed.</p>
-        </div>
-        <div class="step-arrow">→</div>
-        <div class="step">
-            <div class="step-num">02</div>
-            <h3>Upload Resume</h3>
-            <p>Upload your PDF or DOCX resume. Our engine analyzes it in seconds.</p>
-        </div>
-        <div class="step-arrow">→</div>
-        <div class="step">
-            <div class="step-num">03</div>
-            <h3>Improve & Learn</h3>
-            <p>Review your score, apply suggestions, chat with AI, follow DSA roadmaps.</p>
-        </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h3>Upload Resume</h3>
+      <p>Upload your PDF or DOCX resume. Our engine analyzes it in seconds.</p>
     </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h3>Improve & Learn</h3>
+      <p>
+        Review your score, apply suggestions, chat with AI, follow DSA roadmaps.
+      </p>
+    </div>
+  </div>
 </section>
 
 <!-- CTA -->
 <section class="cta-section">
-    <div class="cta-card">
-        <h2>Ready to <span class="gradient-text">Level Up</span> Your Career?</h2>
-        <p>Join CSE students already using CareerAI to land their dream internships and jobs.</p>
-        <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">Create Free Account →</a>
-    </div>
+  <div class="cta-card">
+    <h2>Ready to <span class="gradient-text">Level Up</span> Your Career?</h2>
+    <p>
+      Join the community of students already using CareerAI to land their dream
+      internships and jobs.
+    </p>
+    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg"
+      >Create Free Account →</a
+    >
+  </div>
 </section>
 {% endblock %}

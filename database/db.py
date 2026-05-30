@@ -2,26 +2,30 @@
 Database module - MySQL setup
 """
 
-import mysql.connector
-from mysql.connector import Error
+import psycopg2
+import psycopg2.extras
 from werkzeug.security import generate_password_hash
 from flask import current_app, g
 
 
 def get_db():
-    """Get MySQL connection stored on Flask g object."""
     if 'db' not in g:
         try:
-            g.db = mysql.connector.connect(
-            host=current_app.config['DB_HOST'],
-            port=int(current_app.config['DB_PORT']),
-            user=current_app.config['DB_USER'],
-            password=current_app.config['DB_PASSWORD'],
-            database=current_app.config['DB_NAME'],
-            autocommit=False
-)
-        except mysql.connector.Error as err:
-            print("MySQL Connection Error:", err)
+            database_url = current_app.config['DATABASE_URL']
+
+            # Local PostgreSQL
+            if "localhost" in database_url or "127.0.0.1" in database_url:
+                g.db = psycopg2.connect(database_url)
+
+            # Cloud PostgreSQL (Neon, Render, Railway, Supabase)
+            else:
+                g.db = psycopg2.connect(
+                    database_url,
+                    sslmode='require'
+                )
+
+        except Exception as err:
+            print("PostgreSQL Connection Error:", err)
             raise
 
     return g.db
@@ -41,7 +45,7 @@ def init_db():
     # USERS
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
             email VARCHAR(255) UNIQUE NOT NULL,
             password_hash TEXT NOT NULL,
@@ -54,7 +58,7 @@ def init_db():
     # ADMINS
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS admins (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             email VARCHAR(255) UNIQUE NOT NULL,
             password_hash TEXT NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -64,7 +68,7 @@ def init_db():
     # RESUMES
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS resumes (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             user_id INT NOT NULL,
             filename VARCHAR(255) NOT NULL,
             ats_score INT,
@@ -81,7 +85,7 @@ def init_db():
     # DSA RESOURCES
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS dsa_resources (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             category VARCHAR(50) NOT NULL,
             title VARCHAR(255) NOT NULL,
             description TEXT,
@@ -96,7 +100,7 @@ def init_db():
     # SUGGESTIONS
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS suggestions (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             category VARCHAR(50) NOT NULL,
             title VARCHAR(255) NOT NULL,
             content TEXT NOT NULL,
@@ -108,7 +112,7 @@ def init_db():
     # CHAT HISTORY
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS chat_history (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             user_id INT NOT NULL,
             role VARCHAR(50) NOT NULL,
             message TEXT NOT NULL,
@@ -125,21 +129,42 @@ def init_db():
 
 def query_db(query, args=None, one=False):
     conn = get_db()
-    cursor = conn.cursor(dictionary=True)
+
+    cursor = conn.cursor(
+        cursor_factory=psycopg2.extras.RealDictCursor
+    )
+
     cursor.execute(query, args or ())
     result = cursor.fetchall()
+
     cursor.close()
+
     return (result[0] if result else None) if one else result
 
 
-def execute_db(query, args=None):
+def execute_db(query, args=None, fetchone=False):
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute(query, args or ())
-    conn.commit()
-    last_id = cursor.lastrowid
-    cursor.close()
-    return last_id
+
+    try:
+        cursor.execute(query, args or ())
+
+        result = None
+
+        if fetchone:
+            result = cursor.fetchone()
+
+        conn.commit()
+
+        return result
+
+    except Exception as e:
+        conn.rollback()
+        print("Database Error:", e)
+        raise
+
+    finally:
+        cursor.close()
 
 def seed_admin():
     from config import Config
