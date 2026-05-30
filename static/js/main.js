@@ -3,12 +3,6 @@
    Global UI interactions: nav, flash messages, animations
    =================================================== */
 
-// ─── Mobile Navigation ─────────────────────────────
-function toggleMobileMenu() {
-  const menu = document.getElementById("mobileMenu");
-  if (menu) menu.classList.toggle("show");
-}
-
 // Close mobile menu on outside click
 document.addEventListener("click", (e) => {
   const menu = document.getElementById("mobileMenu");

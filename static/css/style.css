@@ -284,7 +284,7 @@ ul {
 
 .nav-toggle {
   display: none;
-
+  margin-left: auto;
   background: transparent;
   border: none;
 
@@ -374,7 +374,7 @@ ul {
 
 /* ─── Responsive ──────────────────────────────────── */
 
-@media (max-width: 900px) {
+@media (max-width: px) {
   .nav-links,
   .nav-right {
     display: none;

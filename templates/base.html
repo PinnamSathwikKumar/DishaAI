@@ -9,6 +9,10 @@
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
       rel="stylesheet"
     />
+    <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+/>
     <link rel="icon" href="{{ url_for('static', filename='disha.png') }}" />
     <link
       rel="icon"
@@ -96,20 +100,35 @@
         {% endif %}
 
         <!-- Mobile menu toggle -->
-        <button class="nav-toggle" onclick="toggleMobileMenu()">☰</button>
+        <button class="nav-toggle" ><i class="fas fa-bars"></i></button>
       </div>
       <!-- Mobile menu -->
       <div class="nav-mobile" id="mobileMenu">
-        {% if session.get('user_id') %}
+
+    {% if session.get('user_id') %}
+
         <a href="{{ url_for('user.dashboard') }}">Dashboard</a>
         <a href="{{ url_for('user.resume') }}">Resume</a>
         <a href="{{ url_for('user.chat') }}">Chat AI</a>
         <a href="{{ url_for('user.dsa_roadmap') }}">DSA Roadmap</a>
         <a href="{{ url_for('auth.logout') }}">Logout</a>
-        {% else %}
+
+    {% elif session.get('admin_id') %}
+
+        <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('admin.resources') }}">Resources</a>
+        <a href="{{ url_for('admin.users') }}">Users</a>
+        <a href="{{ url_for('admin.suggestions') }}">Tips</a>
+        <a href="{{ url_for('auth.admin_logout') }}">Logout</a>
+
+    {% else %}
+
         <a href="{{ url_for('auth.login') }}">Login</a>
         <a href="{{ url_for('auth.register') }}">Register</a>
-        {% endif %}
+
+    {% endif %}
+
+</div>
       </div>
     </nav>
 
