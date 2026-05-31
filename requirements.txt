@@ -7,7 +7,7 @@
 # ─── Core Framework ────────────────────────────────────────
 Flask==3.0.3
 Werkzeug==3.0.3            # Password hashing, secure filename, request utils
-psycopg2-binary==2.9.9
+psycopg2-binary==2.9.10
 # ─── Environment Variables ─────────────────────────────────
 python-dotenv==1.0.1       # Loads .env file into os.environ
 
