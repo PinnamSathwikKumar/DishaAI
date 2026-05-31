@@ -6,10 +6,10 @@ Handles user registration, login, logout, and admin login
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from database.db import query_db, execute_db
-
+import re
 auth_bp = Blueprint('auth', __name__)
 
-
+EMAIL_REGEX = r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
 @auth_bp.route('/')
 def index():
     """Landing page."""
@@ -32,11 +32,22 @@ def register():
         errors = []
         if not name or len(name) < 2:
             errors.append('Name must be at least 2 characters.')
-        if not email or '@' not in email:
+        if not re.match(EMAIL_REGEX, email):
             errors.append('Enter a valid email address.')
-        if not password or len(password) < 6:
-            errors.append('Password must be at least 6 characters.')
+        if not password or len(password) < 8:
+            errors.append('Password must be at least 8 characters.')
 
+        if not re.search(r'[A-Z]', password):
+            errors.append('Password must contain an uppercase letter.')
+
+        if not re.search(r'[a-z]', password):
+            errors.append('Password must contain a lowercase letter.')
+
+        if not re.search(r'\d', password):
+            errors.append('Password must contain a number.')
+
+        if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+            errors.append('Password must contain a special character.')
         # Check if email already exists
         existing = query_db('SELECT id FROM users WHERE email = %s', (email,), one=True)
         if existing:
@@ -53,6 +64,8 @@ def register():
             'INSERT INTO users (name, email, password_hash, college, year) VALUES (%s, %s, %s, %s, %s)',
             (name, email, password_hash, college, year)
         )
+        session.clear()
+        session.permanent = True
         session['user_id'] = user_id
         session['user_name'] = name
         flash('Welcome to DishaAI! 🎉', 'success')
@@ -73,6 +86,9 @@ def login():
         user = query_db('SELECT * FROM users WHERE email = %s', (email,), one=True)
 
         if user and check_password_hash(user['password_hash'], password):
+            session.clear()
+            session.permanent = True
+
             session['user_id'] = user['id']
             session['user_name'] = user['name']
             flash(f'Welcome back, {user["name"]}! 👋', 'success')

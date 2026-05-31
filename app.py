@@ -12,7 +12,9 @@ from routes.auth import auth_bp
 from routes.user import user_bp
 from routes.admin import admin_bp
 from routes.api import api_bp
-
+from flask import session, redirect, url_for, flash
+from database.db import query_db
+from datetime import timedelta
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -28,6 +30,11 @@ def create_app(config_class=Config):
     # Close DB after each request
     app.teardown_appcontext(close_db)
 
+    app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE='Lax'
+    )
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=8)
     # ---------------------------------------- 
     # Jinja Date Formatting Filter 
     # ----------------------------------------
@@ -39,6 +46,40 @@ def create_app(config_class=Config):
              return value.strftime(fmt)
         return value
 
+    @app.before_request
+    def validate_user_exists():
+
+        user_id = session.get('user_id')
+
+        if not user_id:
+            return
+
+        user = query_db(
+            "SELECT id FROM users WHERE id = %s",
+            (user_id,),
+            one=True
+        )
+
+        if not user:
+            session.clear()
+            flash(
+                "Your account no longer exists. Please login again.",
+                "error"
+            )
+            return redirect(url_for('auth.login'))
+
+        admin_id = session.get('admin_id')
+
+        if admin_id:
+            admin = query_db(
+                "SELECT id FROM admins WHERE id = %s",
+                (admin_id,),
+                one=True
+            )
+
+            if not admin:
+                session.clear()
+                return redirect(url_for('auth.admin_login'))
     # Register blueprints
     app.register_blueprint(auth_bp)
     app.register_blueprint(user_bp)
