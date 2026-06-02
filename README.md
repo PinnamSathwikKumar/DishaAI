@@ -134,12 +134,6 @@ The database is auto-created on first run with seed DSA resources and the defaul
 
 ---
 
-## 🔐 Default Credentials
-
-| Role  | Email              | Password  |
-| ----- | ------------------ | --------- |
-| Admin | admin@careerAI.com | Admin@123 |
-
 > **⚠️ Change these immediately** before any production deployment via the `.env` file.
 
 ---
@@ -159,9 +153,6 @@ Works out of the box with no API keys. Covers:
 Set `OPENAI_API_KEY` in `.env` for more natural, context-aware responses.
 Estimated cost: ~$0.002 per conversation (very cheap).
 
-```env
-OPENAI_API_KEY=sk-your-key-here
-```
 
 ---
 
@@ -210,9 +201,6 @@ chat_history   -- Per-user chat messages
 
 ## ⚡ Performance 
 
-- SQLite — zero-config, no separate server process
-- No heavy ORM (raw `sqlite3` module)
-- `pdfplumber` reads page-by-page (low memory)
 - Files deleted immediately after processing
 - Gunicorn with 2 sync workers (configurable via `Procfile`)
 - No in-memory caching needed (SQLite is fast for this scale)
@@ -224,7 +212,6 @@ chat_history   -- Per-user chat messages
 | Layer        | Technology                                 |
 | ------------ | ------------------------------------------ |
 | Backend      | Python 3.11 + Flask 3.0                    |
-| Database     | SQLite (via Python sqlite3)                |
 | PDF Parsing  | pdfplumber + PyPDF2 fallback               |
 | DOCX Parsing | python-docx                                |
 | AI           | Keyword engine + OpenAI GPT-3.5 (optional) |
