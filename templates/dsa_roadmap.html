@@ -130,24 +130,6 @@ content %}
     </div>
   </div>
 
-<<<<<<< HEAD
-    <!-- Topics Tab -->
-    <div class="tab-content active" id="tab-topics">
-        <div class="resources-grid">
-            {% for topic in topics %}
-            <div class="resource-card difficulty-{{ topic.difficulty }}">
-                <div class="resource-header">
-                    <div class="resource-order">{{ loop.index }}</div>
-                    <span class="difficulty-badge {{ topic.difficulty }}">{{ topic.difficulty }}</span>
-                </div>
-                <h3 class="resource-title">{{ topic.title }}</h3>
-                <p class="resource-desc">{{ topic.description }}</p>
-                {% if topic.url %}
-                <a href="{{ topic.url }}" target="_blank" rel="noopener" class="resource-link">
-                    View Topic →
-                </a>
-                {% endif %}
-=======
   <div class="tab-content" id="tab-tips">
     <div class="glass-card">
       <h2 class="card-title">💡 Tips from Admin</h2>
@@ -162,7 +144,6 @@ content %}
 
               <h3>{{ tip.title }}</h3>
               <p>{{ tip.content }}</p>
->>>>>>> edf3778 (Add admin-managed tips tab to DSA roadmap)
             </div>
             {% endfor %}
           </div>
