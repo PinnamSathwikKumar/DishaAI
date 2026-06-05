@@ -1,50 +1,136 @@
-{% extends "base.html" %}
-{% block title %}DSA Roadmap{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}DSA Roadmap{% endblock %} {% block
+content %}
 <div class="page-container">
-    <div class="page-header">
-        <div>
-            <h1>DSA <span class="gradient-text">Roadmap</span></h1>
-            <p class="page-subtitle">Structured preparation plan for coding interviews and placements</p>
+  <div class="page-header">
+    <div>
+      <h1>DSA <span class="gradient-text">Roadmap</span></h1>
+      <p class="page-subtitle">
+        Structured preparation plan for coding interviews and placements
+      </p>
+    </div>
+  </div>
+
+  <!-- Preparation Timeline -->
+  <div class="glass-card timeline-card">
+    <h2 class="card-title">⏰ Recommended Timeline</h2>
+    <div class="timeline">
+      <div class="timeline-phase">
+        <div class="phase-badge beginner">Month 1-2</div>
+        <h3>Foundations</h3>
+        <p>Arrays, Strings, LinkedList, Stack, Queue, Recursion basics</p>
+        <div class="phase-goal">Goal: 50 LeetCode Easy problems</div>
+      </div>
+      <div class="timeline-arrow">→</div>
+      <div class="timeline-phase">
+        <div class="phase-badge intermediate">Month 3-4</div>
+        <h3>Core Algorithms</h3>
+        <p>Trees, Graphs, Binary Search, Heaps, Backtracking</p>
+        <div class="phase-goal">Goal: 80 Medium problems</div>
+      </div>
+      <div class="timeline-arrow">→</div>
+      <div class="timeline-phase">
+        <div class="phase-badge advanced">Month 5-6</div>
+        <h3>Advanced & Interviews</h3>
+        <p>Dynamic Programming, Greedy, System Design, Mock Interviews</p>
+        <div class="phase-goal">Goal: 30 Hard problems + Mock interviews</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('topics', this)">
+      📚 Topics
+    </button>
+    <button class="tab" onclick="showTab('youtube', this)">▶️ YouTube</button>
+    <button class="tab" onclick="showTab('platforms', this)">
+      💻 Platforms
+    </button>
+    <button class="tab" onclick="showTab('plan', this)">📋 Daily Plan</button>
+    <button class="tab" onclick="showTab('tips', this)">💡 Tips</button>
+  </div>
+
+  <!-- Topics Tab -->
+  <div class="tab-content active" id="tab-topics">
+    <div class="resources-grid">
+      {% for topic in topics %}
+      <div class="resource-card difficulty-{{ topic.difficulty }}">
+        <div class="resource-header">
+          <div class="resource-order">{{ loop.index }}</div>
+          <span class="difficulty-badge {{ topic.difficulty }}"
+            >{{ topic.difficulty }}</span
+          >
         </div>
+        <h3 class="resource-title">{{ topic.title }}</h3>
+        <p class="resource-desc">{{ topic.description }}</p>
+        {% if topic.url %}
+        <a
+          href="{{ topic.url }}"
+          target="_blank"
+          rel="noopener"
+          class="resource-link"
+        >
+          View Topic →
+        </a>
+        {% endif %}
+      </div>
+      {% endfor %}
     </div>
+  </div>
 
-    <!-- Preparation Timeline -->
-    <div class="glass-card timeline-card">
-        <h2 class="card-title">⏰ Recommended Timeline</h2>
-        <div class="timeline">
-            <div class="timeline-phase">
-                <div class="phase-badge beginner">Month 1-2</div>
-                <h3>Foundations</h3>
-                <p>Arrays, Strings, LinkedList, Stack, Queue, Recursion basics</p>
-                <div class="phase-goal">Goal: 50 LeetCode Easy problems</div>
-            </div>
-            <div class="timeline-arrow">→</div>
-            <div class="timeline-phase">
-                <div class="phase-badge intermediate">Month 3-4</div>
-                <h3>Core Algorithms</h3>
-                <p>Trees, Graphs, Binary Search, Heaps, Backtracking</p>
-                <div class="phase-goal">Goal: 80 Medium problems</div>
-            </div>
-            <div class="timeline-arrow">→</div>
-            <div class="timeline-phase">
-                <div class="phase-badge advanced">Month 5-6</div>
-                <h3>Advanced & Interviews</h3>
-                <p>Dynamic Programming, Greedy, System Design, Mock Interviews</p>
-                <div class="phase-goal">Goal: 30 Hard problems + Mock interviews</div>
-            </div>
-        </div>
+  <!-- YouTube Tab -->
+  <div class="tab-content" id="tab-youtube">
+    <div class="resources-grid">
+      {% for channel in youtube %}
+      <div class="resource-card youtube-card">
+        <div class="yt-icon">▶️</div>
+        <h3 class="resource-title">{{ channel.title }}</h3>
+        <span class="difficulty-badge {{ channel.difficulty }}"
+          >{{ channel.difficulty }}</span
+        >
+        <p class="resource-desc">{{ channel.description }}</p>
+        {% if channel.url %}
+        <a
+          href="{{ channel.url }}"
+          target="_blank"
+          rel="noopener"
+          class="resource-link youtube-link"
+        >
+          Open Channel →
+        </a>
+        {% endif %}
+      </div>
+      {% endfor %}
     </div>
+  </div>
 
-    <!-- Tabs -->
-    <div class="tabs">
-        <button class="tab active" onclick="showTab('topics', this)">📚 Topics</button>
-        <button class="tab" onclick="showTab('youtube', this)">▶️ YouTube</button>
-        <button class="tab" onclick="showTab('platforms', this)">💻 Platforms</button>
-        <button class="tab" onclick="showTab('plan', this)">📋 Daily Plan</button>
+  <!-- Platforms Tab -->
+  <div class="tab-content" id="tab-platforms">
+    <div class="resources-grid">
+      {% for platform in platforms %}
+      <div class="resource-card platform-card">
+        <div class="platform-rank">#{{ loop.index }}</div>
+        <h3 class="resource-title">{{ platform.title }}</h3>
+        <span class="difficulty-badge {{ platform.difficulty }}"
+          >{{ platform.difficulty }}</span
+        >
+        <p class="resource-desc">{{ platform.description }}</p>
+        {% if platform.url %}
+        <a
+          href="{{ platform.url }}"
+          target="_blank"
+          rel="noopener"
+          class="resource-link"
+        >
+          Visit Platform →
+        </a>
+        {% endif %}
+      </div>
+      {% endfor %}
     </div>
+  </div>
 
+<<<<<<< HEAD
     <!-- Topics Tab -->
     <div class="tab-content active" id="tab-topics">
         <div class="resources-grid">
@@ -61,134 +147,154 @@
                     View Topic →
                 </a>
                 {% endif %}
+=======
+  <div class="tab-content" id="tab-tips">
+    <div class="glass-card">
+      <h2 class="card-title">💡 Tips from Admin</h2>
+
+          {% if suggestions %}
+          <div class="tips-grid">
+            {% for tip in suggestions %}
+            <div class="tip-card">
+              <span class="cat-badge cat-{{ tip.category }}">
+                {{ tip.category|upper }}
+              </span>
+
+              <h3>{{ tip.title }}</h3>
+              <p>{{ tip.content }}</p>
+>>>>>>> edf3778 (Add admin-managed tips tab to DSA roadmap)
             </div>
             {% endfor %}
+          </div>
+          {% else %}
+          <p>No tips available.</p>
+          {% endif %}
         </div>
-    </div>
+      </div>
 
-    <!-- YouTube Tab -->
-    <div class="tab-content" id="tab-youtube">
-        <div class="resources-grid">
-            {% for channel in youtube %}
-            <div class="resource-card youtube-card">
-                <div class="yt-icon">▶️</div>
-                <h3 class="resource-title">{{ channel.title }}</h3>
-                <span class="difficulty-badge {{ channel.difficulty }}">{{ channel.difficulty }}</span>
-                <p class="resource-desc">{{ channel.description }}</p>
-                {% if channel.url %}
-                <a href="{{ channel.url }}" target="_blank" rel="noopener" class="resource-link youtube-link">
-                    Open Channel →
-                </a>
-                {% endif %}
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-
-    <!-- Platforms Tab -->
-    <div class="tab-content" id="tab-platforms">
-        <div class="resources-grid">
-            {% for platform in platforms %}
-            <div class="resource-card platform-card">
-                <div class="platform-rank">#{{ loop.index }}</div>
-                <h3 class="resource-title">{{ platform.title }}</h3>
-                <span class="difficulty-badge {{ platform.difficulty }}">{{ platform.difficulty }}</span>
-                <p class="resource-desc">{{ platform.description }}</p>
-                {% if platform.url %}
-                <a href="{{ platform.url }}" target="_blank" rel="noopener" class="resource-link">
-                    Visit Platform →
-                </a>
-                {% endif %}
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-
-    <!-- Daily Plan Tab -->
-    <div class="tab-content" id="tab-plan">
+      <!-- Daily Plan Tab -->
+      <div class="tab-content" id="tab-plan">
         <div class="glass-card">
-            <h2 class="card-title">📋 Daily Practice Schedule</h2>
-            <div class="daily-plan">
-                <div class="plan-day">
-                    <div class="day-header">🌅 Morning (1 hr)</div>
-                    <ul>
-                        <li>Review yesterday's solved problems</li>
-                        <li>Read theory for today's topic (GeeksforGeeks)</li>
-                        <li>Watch 1 explanation video (NeetCode / Abdul Bari)</li>
-                    </ul>
-                </div>
-                <div class="plan-day">
-                    <div class="day-header">☀️ Afternoon (2 hrs)</div>
-                    <ul>
-                        <li>Solve 1 Easy LeetCode (warm-up)</li>
-                        <li>Solve 1-2 Medium LeetCode problems</li>
-                        <li>Write code in preferred language (Python/Java/C++)</li>
-                    </ul>
-                </div>
-                <div class="plan-day">
-                    <div class="day-header">🌙 Evening (1 hr)</div>
-                    <ul>
-                        <li>Review solutions you couldn't solve</li>
-                        <li>Note patterns and approaches in a notebook</li>
-                        <li>Plan tomorrow's topic</li>
-                    </ul>
-                </div>
+          <h2 class="card-title">📋 Daily Practice Schedule</h2>
+          <div class="daily-plan">
+            <div class="plan-day">
+              <div class="day-header">🌅 Morning (1 hr)</div>
+              <ul>
+                <li>Review yesterday's solved problems</li>
+                <li>Read theory for today's topic (GeeksforGeeks)</li>
+                <li>Watch 1 explanation video (NeetCode / Abdul Bari)</li>
+              </ul>
             </div>
-            <div class="plan-tips">
-                <h3>💡 Pro Tips</h3>
-                <div class="tips-list">
-                    <div class="pro-tip">Don't look at the solution for at least 45 minutes</div>
-                    <div class="pro-tip">After solving, always check if your solution is optimal</div>
-                    <div class="pro-tip">Practice explaining your approach out loud (mock interview prep)</div>
-                    <div class="pro-tip">Track solved problems in a spreadsheet — patterns become clear</div>
-                    <div class="pro-tip">Consistency > intensity. 2 hours/day beats 8-hour cramming</div>
-                </div>
+            <div class="plan-day">
+              <div class="day-header">☀️ Afternoon (2 hrs)</div>
+              <ul>
+                <li>Solve 1 Easy LeetCode (warm-up)</li>
+                <li>Solve 1-2 Medium LeetCode problems</li>
+                <li>Write code in preferred language (Python/Java/C++)</li>
+              </ul>
             </div>
+            <div class="plan-day">
+              <div class="day-header">🌙 Evening (1 hr)</div>
+              <ul>
+                <li>Review solutions you couldn't solve</li>
+                <li>Note patterns and approaches in a notebook</li>
+                <li>Plan tomorrow's topic</li>
+              </ul>
+            </div>
+          </div>
+          <div class="plan-tips">
+            <h3>💡 Pro Tips</h3>
+            <div class="tips-list">
+              <div class="pro-tip">
+                Don't look at the solution for at least 45 minutes
+              </div>
+              <div class="pro-tip">
+                After solving, always check if your solution is optimal
+              </div>
+              <div class="pro-tip">
+                Practice explaining your approach out loud (mock interview prep)
+              </div>
+              <div class="pro-tip">
+                Track solved problems in a spreadsheet — patterns become clear
+              </div>
+              <div class="pro-tip">
+                Consistency > intensity. 2 hours/day beats 8-hour cramming
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="glass-card">
-            <h2 class="card-title">📊 NeetCode 150 — Recommended Problem List</h2>
-            <div class="problem-categories">
-                <div class="prob-cat">
-                    <h4>Arrays & Hashing</h4>
-                    <p>Contains Duplicate, Valid Anagram, Two Sum, Group Anagrams, Top K Frequent</p>
-                </div>
-                <div class="prob-cat">
-                    <h4>Two Pointers</h4>
-                    <p>Valid Palindrome, 3Sum, Container With Most Water, Trapping Rain Water</p>
-                </div>
-                <div class="prob-cat">
-                    <h4>Sliding Window</h4>
-                    <p>Best Time to Buy/Sell Stock, Longest Substring Without Repeating, Minimum Window Substring</p>
-                </div>
-                <div class="prob-cat">
-                    <h4>Trees</h4>
-                    <p>Invert Binary Tree, Max Depth, Same Tree, LCA, BFS Level Order, Serialize/Deserialize</p>
-                </div>
-                <div class="prob-cat">
-                    <h4>Dynamic Programming</h4>
-                    <p>Climbing Stairs, Coin Change, Longest Common Subsequence, Word Break, House Robber</p>
-                </div>
-                <div class="prob-cat">
-                    <h4>Graphs</h4>
-                    <p>Number of Islands, Clone Graph, Pacific Atlantic Water Flow, Course Schedule, Word Ladder</p>
-                </div>
+          <h2 class="card-title">📊 NeetCode 150 — Recommended Problem List</h2>
+          <div class="problem-categories">
+            <div class="prob-cat">
+              <h4>Arrays & Hashing</h4>
+              <p>
+                Contains Duplicate, Valid Anagram, Two Sum, Group Anagrams, Top
+                K Frequent
+              </p>
             </div>
-            <a href="https://neetcode.io/roadmap" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top:1rem">
-                Open Full NeetCode Roadmap →
-            </a>
+            <div class="prob-cat">
+              <h4>Two Pointers</h4>
+              <p>
+                Valid Palindrome, 3Sum, Container With Most Water, Trapping Rain
+                Water
+              </p>
+            </div>
+            <div class="prob-cat">
+              <h4>Sliding Window</h4>
+              <p>
+                Best Time to Buy/Sell Stock, Longest Substring Without
+                Repeating, Minimum Window Substring
+              </p>
+            </div>
+            <div class="prob-cat">
+              <h4>Trees</h4>
+              <p>
+                Invert Binary Tree, Max Depth, Same Tree, LCA, BFS Level Order,
+                Serialize/Deserialize
+              </p>
+            </div>
+            <div class="prob-cat">
+              <h4>Dynamic Programming</h4>
+              <p>
+                Climbing Stairs, Coin Change, Longest Common Subsequence, Word
+                Break, House Robber
+              </p>
+            </div>
+            <div class="prob-cat">
+              <h4>Graphs</h4>
+              <p>
+                Number of Islands, Clone Graph, Pacific Atlantic Water Flow,
+                Course Schedule, Word Ladder
+              </p>
+            </div>
+          </div>
+          <a
+            href="https://neetcode.io/roadmap"
+            target="_blank"
+            rel="noopener"
+            class="btn btn-primary"
+            style="margin-top: 1rem"
+          >
+            Open Full NeetCode Roadmap →
+          </a>
         </div>
+      </div>
     </div>
+    {% endblock %} {% block extra_js %}
+    <script>
+      function showTab(name, el) {
+        document
+          .querySelectorAll(".tab-content")
+          .forEach((t) => t.classList.remove("active"));
+        document
+          .querySelectorAll(".tab")
+          .forEach((t) => t.classList.remove("active"));
+        document.getElementById("tab-" + name).classList.add("active");
+        el.classList.add("active");
+      }
+    </script>
+    {% endblock %}
+  </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-function showTab(name, el) {
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.getElementById('tab-' + name).classList.add('active');
-    el.classList.add('active');
-}
-</script>
-{% endblock %}

@@ -194,7 +194,15 @@ def dsa_roadmap():
     platforms = query_db(
         "SELECT * FROM dsa_resources WHERE category='platform' AND is_active ORDER BY order_index",
     )
-    return render_template('dsa_roadmap.html', topics=topics, youtube=youtube, platforms=platforms)
+    suggestions = query_db(
+    """
+    SELECT *
+    FROM suggestions
+    WHERE is_active = TRUE
+    ORDER BY created_at DESC
+    """
+)
+    return render_template('dsa_roadmap.html', topics=topics, youtube=youtube, platforms=platforms, suggestions=suggestions)
 
 
 @user_bp.route('/profile')
