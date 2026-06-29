@@ -1,4 +1,4 @@
-# ⚡ CareerAI — AI-Powered Career Assistant for CSE Students
+# ⚡ DishaAI — AI-Powered Career Assistant for Students
 
 > A full-stack web platform that helps Computer Science students optimize their resumes, get AI career guidance, follow structured DSA roadmaps, and prepare for placements — all for free.
 
@@ -24,7 +24,7 @@
 ## 🗂️ Project Structure
 
 ```
-career_ai/
+disha_ai/
 │
 ├── app.py                  # Flask app factory & entry point
 ├── config.py               # All configuration, env vars, ATS keywords
